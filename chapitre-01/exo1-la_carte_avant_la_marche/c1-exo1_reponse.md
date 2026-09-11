@@ -58,3 +58,10 @@ Status: Not running
 |1|||**Total**|
 
 Racine du WOrksapce : `kodesi`
+
+Dans mon projet j'ai `5 chaines de compilation`, qui sont entre autre :
+* host-clang
+* host-gcc
+* clang-mingw
+* mingw
+* clang-cross-linux
