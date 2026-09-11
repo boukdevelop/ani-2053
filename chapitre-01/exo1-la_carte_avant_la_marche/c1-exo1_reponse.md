@@ -57,9 +57,9 @@ Status: Not running
 |*1*|*test_jenga*|*ConsoleApp*||
 |1|||**Total**|
 
-Racine du WOrksapce : `kodesi`
+Le fichier de racine de mon projet : `kodesi.jenga`. Et le projet de démarrage est `test_jenga` qui est d'ailleurs le seul projet.
 
-Dans mon projet j'ai `5 chaines de compilation`, qui sont entre autre :
+Dans mon projet j'ai `5 chaines de compilation`, qui sont :
 * host-clang
 * host-gcc
 * clang-mingw

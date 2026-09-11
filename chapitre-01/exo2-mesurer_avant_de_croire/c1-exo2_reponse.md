@@ -6,8 +6,6 @@ Il nous est demandé de comparer nos projets, les différents fichiers `*.jenga`
 ### Observation propre à mon projet
 
 ```zsh
- jenga info
-
 ╔══════════════════════════════════════════════════════════════════╗
 ║                                                                  ║
 ║                ██╗███████╗███╗   ██╗ ██████╗  █████╗             ║
@@ -23,8 +21,8 @@ Il nous est demandé de comparer nos projets, les différents fichiers `*.jenga`
 
 =========================== Jenga Workspace: kodesi ============================
 
-Location: C:\Users\FRANCK\Desktop\dossier\ENSPY\polytech_L2\GAP\kodesi_jenga\kodesi
-Entry file: C:\Users\FRANCK\Desktop\dossier\ENSPY\polytech_L2\GAP\kodesi_jenga\kodesi\kodesi.jenga
+Location: ...\kodesi
+Entry file: ...kodesi_jenga\kodesi\kodesi.jenga
 Configurations: Debug, Release
 Platforms: Windows
 Target OSes: Windows
@@ -55,18 +53,23 @@ Status: Not running
 
 ```
 
----
----
+|Num projet | Nom | Type| |
+|-|-|-|-|
+|*1*|*test_jenga*|*ConsoleApp*||
+|1|||**Total**|
+
+Racine du WOrksapce : `kodesi`
+
+Dans mon projet j'ai `5 chaines de compilation`, qui sont entre autre :
+* host-clang
+* host-gcc
+* clang-mingw
+* mingw
+* clang-cross-linux
 
 ### Observation propre aux fichiers sources du dépôts 
 
 ```zsh
-FRANCK@DESKTOP-9ABFSKK MINGW64 ~/Desktop/dossier/ENSPY/polytech_L2/GAP/JengaGit/Jenga/Jenga/Exemples (main)
-$ cd 27_nk_window/
-
-FRANCK@DESKTOP-9ABFSKK MINGW64 ~/Desktop/dossier/ENSPY/polytech_L2/GAP/JengaGit/Jenga/Jenga/Exemples/27_nk_window (main)
-$ jenga info
-
 ╔══════════════════════════════════════════════════════════════════╗
 ║                                                                  ║
 ║                ██╗███████╗███╗   ██╗ ██████╗  █████╗             ║
@@ -82,8 +85,8 @@ $ jenga info
 
 ========================== Jenga Workspace: NKWindow ===========================
 
-Location: C:\Users\FRANCK\Desktop\dossier\ENSPY\polytech_L2\GAP\JengaGit\Jenga\Jenga\Exemples\27_nk_window
-Entry file: C:\Users\FRANCK\Desktop\dossier\ENSPY\polytech_L2\GAP\JengaGit\Jenga\Jenga\Exemples\27_nk_window\27_nk_window.jenga
+Location: ...\Exemples\27_nk_window
+Entry file: ...\Exemples\27_nk_window\27_nk_window.jenga
 Configurations: Debug, Release
 Platforms: Windows
 Target OSes: Windows, Linux, macOS, Android, Web, iOS, HarmonyOS
@@ -127,4 +130,5 @@ Après observation, je me suis rendu compte que non seulement il y'a plus :
 * De projet de démarrage;
 Avec un projet en particulier `NKWindow_Tests` dont le test est réussi.
 
-Alors que moi je n'avait qu'un seul projet dont la sortie est `Test : No`.
+Alors que moi je n'avait qu'un seul projet dont la sortie de test est : `Test : No`.
+
