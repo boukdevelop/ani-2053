@@ -16,7 +16,7 @@
 |``*.h``|2762|1 114 334|
 ||4 375|2 142 188|**Total**|
 
-``Remarque:`` Je constate qu'il y'a moins de ligne de code et de fichier que ce qui est mentionné dans le chapitre.
+``Remarque:`` Je constate qu'il y'a plus de ligne de code et de fichier que ce qui est mentionné dans le chapitre.
 
 # Commande CLI
 
