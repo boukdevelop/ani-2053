@@ -12,9 +12,9 @@
 
 |Fichiers source|Nbre|nbre de ligne||
 |--|--|--|--|
-|``*.cpp``|1613|175148|
-|``*.h``|2762|144265|
-||4 375|319 413|**Total**|
+|``*.cpp``|1613|1 027 854|
+|``*.h``|2762|1 114 334|
+||4 375|2 142 188|**Total**|
 
 ``Remarque:`` Je constate qu'il y'a moins de ligne de code et de fichier que ce qui est mentionné dans le chapitre.
 
