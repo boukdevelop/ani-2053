@@ -1,27 +1,34 @@
 # Votre premier projet
 
-```txt
-Structure du projet Applications
-C:.
-├───.jenga
-└───Applications
-    ├───.jenga
-    ├───Build
-    │   ├───Bin
-    │   │   └───Debug-Windows
-    │   │       └───MonEssai
-    │   └───Obj
-    │       └───Debug-Windows
-    │           └───MonEssai
-    └───MonEssai
-        ├───include
-        └───src
+
+
+```bash
+============================================================
+Summary
+============================================================
+
+  Project:      MonEssai
+  Type:         console
+  Language:     C++ (C++17)
+  Location:     .
+  Jenga file:   separate (.jenga inclus)
+  Directories:  Yes
+  Starter files:Yes
+
+  Structure:
+  MonEssai/
+  +-- MonEssai.jenga   (projet inclus via include)
+  +-- src/
+  |   +-- main.cpp
+  +-- include/
+
 ```
 
 ## Vérification via ***jenga info*** :
 
-```txt
+```bash
 
+$ jenga info
 
 ╔══════════════════════════════════════════════════════════════════╗
 ║                                                                  ║
@@ -36,32 +43,31 @@ C:.
 ║                                                                  ║
 ╚══════════════════════════════════════════════════════════════════╝
 
-======================== Jenga Workspace: Applications =========================
+[NKCode] ATTENTION : aucun wheel Jenga trouve (dist/*.whl) -> le paquet n'aura PAS de Jenga embarque, et les boutons Construire/Executer seront inoperants. Produisez-le avec ./cri.sh dans le d
+epot Jenga.
+========================== Jenga Workspace: Nkentseu ===========================
 
-Location: ...\Applications
-Entry file: ...\Applications\Applications.jenga
+Location: ...\Nkentseu
+Entry file: ...\Nkentseu\Nkentseu.jenga
 Configurations: Debug, Release
 Platforms: Windows
-Target OSes: Windows
-Target Architectures: x86_64
+Target OSes: Windows, Linux, macOS, Android, iOS, Web, HarmonyOS, XboxSeries, XboxOne
+Target Architectures: x86_64, arm64, wasm32
+Start project: Sandbox
 
 
 Projects
 ------------------------------------------------------------
-Name       Kind         Language   Test   External
-==================================================
-MonEssai   ConsoleApp   C++        No     Yes
+Name                         Kind          Language   Test   External
+=====================================================================
+__Unitest__                  StaticLib     C++        No     No
+.                                  .       .           .     .
+.                                  .       .           .     .
+.                                  .       .           .     .
+.                                  .       .           .     .
+MonEssai                     ConsoleApp    C++        No     Yes
 
-
-Available Toolchains
-------------------------------------------------------------
-Name                Family   Target OS   Arch     Env  
-=======================================================
-host-clang          clang    Windows     x86_64   mingw
-host-gcc            gcc      Windows     x86_64   mingw
-clang-mingw         clang    Windows     x86_64   mingw
-mingw               gcc      Windows     x86_64   mingw
-clang-cross-linux   clang    Linux       x86_64   gnu
-
-
+.
+.
+.
 ```
