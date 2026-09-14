@@ -9,2509 +9,959 @@ Annoter un fichier ``.jenga`` :
 
 Marquer d'un `?` tout ce qui est incompréhensible.
 
-# Nkentseu.jenga — Fichier de projet annoté
+# NKIlyana.jenga — fichier `.jenga` annoté
 
-> **But** : Être capable de reconnaître une dépendances, un TYPE, une Source, un Filtre, un Tests et poser des interrogations là où il y'a incompréhension.
+> **Grille d'annotation demandée** : `Types`, `Sources`, `Dépendances`, `Filtres`, `Tests`.
 >
-> **Grille de lecture** : `Types`, `Sources`, `Dépendances`, `Filtres`, `Tests`, puis `?` dès qu'un élément reste incompréhensible ou doit être confirmé.
+> Toute partie non démontrable à partir de l'extrait fourni est marquée `?`.
+>
+> L'objectif est de pouvoir répondre à une question comme : **« où est décidé que ce module est une bibliothèque statique ? »** sans confondre déclaration du projet, dépendances, filtrage et linking.
 
-## 1. Légende
+---
 
-| Annotation | Signification |
+## 1. Vue d'ensemble
+
+`NKIlyana.jenga` décrit le projet **NKIlyana**, présenté par son en-tête comme un modèle consacré à la préparation de données, à l'entraînement et au dialogue.
+
+### Classification rapide
+
+| Élément | Observation |
 |---|---|
-| `[TYPE]` | Type/nature du bloc Jenga ou Python. |
-| `[SOURCE]` | Fichier ou ressource externe consommé(e). |
-| `[DEPENDENCY]` | Dépendance ou ordre nécessaire au build. |
-| `[FILTER]` | Condition, option ou sélection qui modifie le graphe actif. |
-| `[TEST]` | Test, banc, vérification ou mécanisme de validation. |
-| `[NOTE]` | Observation explicative. |
-| `[RISK]` | Point présentant un risque technique ou de reproductibilité. |
-| `[?]` / `?` | Élément qui nécessite une clarification ou une vérification dans le code Jenga réel. |
-
-## 2. Fichier source annoté
-
-Les commentaires `[ANNOTATION]` ci-dessous sont **des annotations d'analyse**. Ils ne doivent pas être interprétés comme des instructions supplémentaires à Jenga.
-
-```python
-#!/usr/bin/env python3
-
-# -*- coding: utf-8 -*-
-
-"""
-
-=============================================================================
-
-Nkentseu.jenga => Workspace principal du framework Nkentseu
-
-=============================================================================
-
-
-
-
-
-Framework C++ multi-plateforme de gestion de fenetres, d'evenements
-
-et de rendu pixel. Namespace : nkentseu
-
-
-
-
-
-Architecture et ordre de dependances :
-
-
-
-
-
-  NKPlatform  => Detection OS/arch/compilateur/CPU         (C++20)
-
-       ↓
-
-  NKCore      => Types, macros, assertions, bits            (C++20)
-
-       ↓            ↓
-
-  NKMath      => Types géométriques (Vec2, Rect, …)        (C++17)
-
-  NKLogger    => Journalisation asynchrone multi-sink       (C++17)
-
-       ↓            ↓                   ↓
-
-  NKTime      => Gestion du temps / chrono                  (C++17)
-
-  NKStream    => Flux de données (fichier, binaire…)        (C++17)
-
-  NKMemory    => Gestion mémoire + smart pointers           (C++17)
-
-       ↓
-
-  NKWindow    => Fenetrage, evenements, entrees             (C++17)
-
-       ↓
-
-  NKRenderer  => Rendu graphique (Software, OpenGL…)        (C++17)
-
-       ↓
-
-  Sandbox     => Application de demonstration (tous OS)     (C++17)
-
-
-
-
-
-Chaque projet possède son propre fichier .jenga dans son répertoire.
-
-Ce fichier workspace les réunit via include().
-
-
-
-
-
-Plateformes supportees :
-
-  Windows     => Backend Win32                   (clang-mingw)
-
-  Linux XLib  => Backend X11/XLib (defaut)       (clang-native / WSL2)
-
-  Linux XCB   => Backend X11/XCB                 (clang-native / WSL2)
-
-  Linux Wayland => Backend Wayland + xdg-shell   (clang-native / WSL2)
-
-  Linux NOOP  => Backend headless (CI/WSL)        (clang-native / WSL2)
-
-  macOS       => Backend Cocoa                   (clang-native)
-
-  Android     => NativeActivity+EGL              (android-ndk)
-
-  iOS         => Backend UIKit
-
-  Web         => Emscripten+Canvas               (emscripten)
-
-  HarmonyOS   => ArkUI Native
-
-  XboxSeries  => UWP GameCore                    (xbox-clang)
-
-  XboxOne     => UWP GameCore                    (xbox-clang)
-
-
-
-
-
-Usage :
-
-  jenga build                                                   # Hote (XLib)
-
-  jenga build --platform windows                                # Windows
-
-  jenga build --platform linux                                  # Linux XLib (defaut)
-
-  jenga build --platform linux --linux-backend xcb
-
-  jenga build --platform linux --linux-backend wayland
-
-  jenga build --platform linux --linux-backend headless         # Linux headless
-
-  jenga build --platform macos                                  # macOS Cocoa
-
-  jenga build --platform android                                # Android (NDK)
-
-  jenga build --platform ios                                    # iOS (UIKit)
-
-  jenga build --platform web                                    # Web (Emscripten)
-
-  jenga build --platform windows --windows-runtime desktop      # Windows desktop (Win32)
-
-  jenga build --platform windows --windows-runtime uwp          # UWP (Windows Runtime)
-
-  jenga build --platform xboxseries                             # Xbox Series
-
-  jenga build --platform xboxone                                # Xbox One
-
-  jenga build --config Release                                  # Build Release
-
-
-
-
-
-=============================================================================
-
-PACKAGING (jenga package) -- creer des installers distribuables
-
-=============================================================================
-
-
-
-
-
-Une fois le build OK, on peut empaqueter le binaire dans 3 formats Windows :
-
-
-
-
-
-  jenga package --platform windows --project Pong --type zip --config Release
-
-                --output ./dist
-
-        => Pong.zip : archive portable (decompresser + lancer .exe)
-
-
-
-
-
-  jenga package --platform windows --project Pong --type exe --config Release
-
-                --output ./dist
-
-        => Pong_setup.exe : installer Inno Setup avec wizard complet
-
-           (EULA + choix dossier + raccourcis bureau/menu)
-
-
-
-
-
-  jenga package --platform windows --project Pong --type msi --config Release
-
-                --output ./dist
-
-        => Pong.msi : Windows Installer officiel (WiX 5), idem fonctions
-
-
-
-
-
-Linux : --type deb (dpkg-deb), --type rpm/appimage/snap (stubs)
-
-macOS : --type pkg (pkgbuild), --type dmg (create-dmg)
-
-Web   : --type zip (favicon + html + wasm + assets)
-
-
-
-
-
-\-----------------------------------------------------------------------------
-
-PREREQUIS A INSTALLER avant de packager (Windows)
-
-\-----------------------------------------------------------------------------
-
-
-
-
-
-  ZIP : aucun (Python stdlib seulement)
-
-
-
-
-
-  EXE (Inno Setup) :
-
-    winget install JRSoftware.InnoSetup
-
-    -> installe iscc dans %LOCALAPPDATA%\\\Programs\\\Inno Setup 6\\
-
-    -> jenga le detecte auto (pas besoin de toucher au PATH)
-
-
-
-
-
-  MSI (WiX Toolset) :
-
-    dotnet tool install --global wix --version 5.0.2
-
-    -> ATTENTION : ne pas installer WiX 7+ qui demande l'OSMF EULA payante.
-
-    -> jenga ajoute auto WiX a son PATH session
-
-
-
-
-
-  Pillow (pour conversion icones PNG -> .ico/.icns/mipmap) :
-
-    pip install Pillow>=10.0
-
-    -> deja installe normalement (dep jenga via requirements.txt)
-
-
-
-
-
-=============================================================================
-
-ICONES D'APPLICATION (DSL Jenga, voir Core/IconConverter.py)
-
-=============================================================================
-
-
-
-
-
-  Dans un .jenga de projet (ex: Pong.jenga, hors filter) :
-
-
-
-
-
-  appicon("Resources/MyApp/icon.png")
-
-        # Source UNIQUE, dispatchee a TOUTES les plateformes :
-
-        #   - Windows : convertit en .ico embedded via .res
-
-        #   - macOS   : convertit en .icns dans bundle .app
-
-        #   - Android : genere hierarchie res/mipmap-* (ldpi..xxxhdpi)
-
-        #   - iOS     : copie + reference dans Info.plist
-
-        #   - Web     : favicon.ico + favicon-{16,32,180,192,512}.png
-
-
-
-
-
-  # Overrides par plateforme (gagnent sur appicon) :
-
-  androidappicon("path.png")    # accepte PNG ou dossier res/mipmap-*/
-
-  windowsicon   ("path.ico")    # accepte PNG ou .ico natif
-
-  macosicon     ("path.icns")   # accepte PNG ou .icns natif
-
-  iosappicon    ("path.png")    # ou dossier AppIcon.appiconset
-
-  webfavicon    ("path.png")    # PNG converti automatiquement
-
-
-
-
-
-  Note : Pong.exe affiche son icone correctement dans la taskbar/titre/
-
-  Alt+Tab grace a un AppUserModelID stable defini dans NKWindow Win32
-
-  (Rihen.Nkentseu.\<NomApp>). Sans ca, Windows utilise un AUMID auto
-
-  base sur le ProductCode MSI -> icone generique cassee.
-
-
-
-
-
-=============================================================================
-
-METADONNEES INSTALLER (MSI/EXE/DEB/PKG)
-
-=============================================================================
-
-
-
-
-
-  Dans un .jenga de projet (hors filter) :
-
-
-
-
-
-  appversion           ("1.0.0")                  # affichee dans Programs & Features
-
-  apppublisher         ("Rihen Universe")         # nom editeur
-
-  licensefile          ("../../LICENSE")          # .txt/.md (auto-converti en RTF pour WiX), ou .rtf direct
-
-  createdesktopshortcut(True)                     # toggle raccourci bureau
-
-
-
-
-
-  # Bag d'options libres (extensible) pour les besoins avances :
-
-  installeroption("autostart_on_login", True)
-
-  installeroption("registry_entry",     r\\"HKLM\\\Software\\\Pong")
-
-  installeroption("autoupdate_url",     "https\://updates.example.com")
-
-
-
-
-
-  # Ressources runtime a embarquer dans le package :
-
-  dependfiles(["../../Resources/MyApp"])          # dossier ou fichier
-
-        # Preserve la hierarchie relative au workspace.
-
-        # Auto-inclut aussi les SHARED_LIB declarees via dependson().
-
-
-
-
-
-=============================================================================
-
-CYCLE DE BUILD + PACKAGE TYPIQUE (Pong exemple)
-
-=============================================================================
-
-
-
-
-
-  # 1. Build optimise
-
-  jenga build --target Pong --config Release
-
-
-
-
-
-  # 2. Generer les 3 packages Windows
-
-  jenga package --platform windows --project Pong --type zip --config Release
-
-  jenga package --platform windows --project Pong --type exe --config Release
-
-  jenga package --platform windows --project Pong --type msi --config Release
-
-
-
-
-
-  # 3. (optionnel) Build + APK Android
-
-  jenga build --target Pong --config Release --platform android
-
-  jenga deploy --platform android --project Pong --config Release \\
-
-               --apk path/to/Pong-Release.apk --force-stop --run
-
-
-
-
-
-  Distribution typique pour testeurs : envoyer Pong_setup.exe (Inno EXE)
-
-  car wizard plus convivial que MSI. ZIP comme alternative sans install.
-
-
-
-
-
-=============================================================================
-
-IDE auto-config (jenga ide-setup)
-
-=============================================================================
-
-
-
-
-
-  jenga le fait automatiquement au premier `jenga build` :
-
-    - VSCode/Cursor/Windsurf : .vscode/settings.json (associations .jenga
-
-      = Python, extraPaths Jenga, diagnostics)
-
-    - pyrightconfig.json universel (Neovim+pyright, Helix, Emacs+lsp-mode,
-
-      Sublime+LSP, Zed)
-
-  Merge non-destructif : preserve toutes vos prefs IDE existantes.
-
-  Desactiver : JENGA_NO_IDE_CONFIG=1
-
-
-
-
-
-  Reload editor apres premiere installation pour activer la coloration
-
-  Python + autocomplete sur les .jenga.
-
-
-
-
-
-  Notes Wayland :
-
-    Prerequis : libwayland-dev, libxkbcommon-dev, wayland-protocols, libdecor-0-dev
-
-    Generer xdg-shell-client-protocol.h :
-
-      wayland-scanner client-header
-
-        /usr/share/wayland-protocols/stable/xdg-shell/xdg-shell.xml
-
-        Kernel/Runtime/NKWindow/src/NKWindow/Platform/Wayland/xdg-shell-client-protocol.h
-
-      wayland-scanner private-code
-
-        /usr/share/wayland-protocols/stable/xdg-shell/xdg-shell.xml
-
-        Kernel/Runtime/NKWindow/src/NKWindow/Platform/Wayland/xdg-shell-protocol.c
-
-
-
-
-
-Auteur : Rihen
-
-Date   : 2026
-
-=============================================================================
-
-"""
-
-
-
-
-
-import os
-
-import sys
-
-import shutil
-
+| **Type** | `consoleapp()` → application console |
+| **Sources** | `src/main.cpp` |
+| **Dépendances** | `nkentseudependson(...)` avec une longue liste de modules |
+| **Filtres** | filtre Windows visible, avec exclusions UWP/XboxSeries et une condition tronquée |
+| **Tests** | `?` aucun test visible dans l'extrait |
+| **Toolchain** | `usetoolchain(TC_WINDOWS)` dans le filtre Windows |
+| **Linking** | `libdirs(...)` et `_WIN_LINKS` visibles, mais la fin de l'extrait est absente |
+| **Static library ?** | **Non démontré pour NKIlyana ; au contraire `consoleapp()` indique une application console** |
+
+---
+
+## 2. En-tête et imports
+
+```py
+"""NKIlyana — le modele de Rihen : preparation des donnees, entrainement, dialogue."""
 from Jenga import *
-
 from jengaconfig import *
-
-
-
-
-
-# Ensure workspace root is in sys.path so '' works in all .jenga files
-
-_WORKSPACE_ROOT = os.path.dirname(os.path.abspath(__file__)) if "__file__" in dir() else os.getcwd()
-
-if _WORKSPACE_ROOT not in sys.path:
-
-    sys.path.insert(0, _WORKSPACE_ROOT)
-
-
-
-
-
-# Config partagee (registre des modules : kind static/shared + dependances).
-
-# Chargee UNE fois ici via useconfig() et propagee a TOUS les .jenga inclus
-
-# (feature Jenga 2.0.5) -> fini le bloc config inline (\~285 lignes).
-
-# [ANNOTATION] [SOURCE] Fichier de configuration externe chargé puis propagé aux `.jenga` inclus. [DEPENDENCY] Le workspace dépend de ce fichier pour la configuration partagée.
-useconfig("config/modules.jenga")
-
-# [ANNOTATION] [SOURCE] Fichier de configuration externe chargé puis propagé aux `.jenga` inclus. [DEPENDENCY] Le workspace dépend de ce fichier pour la configuration partagée.
-useconfig("config/toolchain.jenga")
-
-# [ANNOTATION] [SOURCE] Fichier de configuration externe chargé puis propagé aux `.jenga` inclus. [DEPENDENCY] Le workspace dépend de ce fichier pour la configuration partagée.
-useconfig("config/graphics.jenga")   # Vulkan SDK / glslang / SPIRV-Cross (partage)
-
-# [ANNOTATION] [SOURCE] Fichier de configuration externe chargé puis propagé aux `.jenga` inclus. [DEPENDENCY] Le workspace dépend de ce fichier pour la configuration partagée.
-useconfig("config/wayland.jenga")    # backend Wayland Linux (partage)
-
-
-
-
-
-# [ANNOTATION] [TYPE] Workspace principal. [DEPENDENCY] Conteneur racine des projets inclus. [QUESTION] La stratégie de workspace unique est-elle définitive ou certains sous-workspaces doivent-ils être isolés ?
-with workspace("Nkentseu", location="."):
-
-# [ANNOTATION] [TYPE] Sélection/configuration de toolchain spécialisée Nkentseu. [QUESTION] La fonction est-elle un wrapper interne, et quelles toolchains exactes enregistre-t-elle ?
-    nkentseutoolchain()
-
-
-
-
-
-# [ANNOTATION] [?] API `dutc()` non expliquée dans ce fichier. [QUESTION] Signification exacte, effet sur le graphe de build et justification de `enable=True` ?
-    dutc(enable=True)       # ========================= ?????
-
-                            #   Je ne comprends pas très bien 
-
-# [ANNOTATION] [?] API `dute()` non expliquée dans ce fichier. [QUESTION] Signification exacte et interaction avec Unitest/build ?
-    dute(enable=True)       # ========================= ?????
-
-
-
-
-
-# [ANNOTATION] [TYPE] Configurations globales du workspace. [NOTE] `Debug` et `Release` sont explicitement déclarées.
-    configurations(["Debug", "Release"])
-
-
-
-
-
-    # ===== Options Linux : choix du backend de fenetrage ========================
-
-# [ANNOTATION] [FILTER] Déclaration d’une option CLI influençant le build/configuration. [QUESTION] Quels autres fichiers consomment cette option et comment sa valeur est-elle propagée ?
-    newoption(
-
-        trigger="linux-backend",
-
-        value="BACKEND",
-
-        allowed=[
-
-            ["xlib",     "X11/XLib  (defaut, le plus compatible)"],
-
-            ["xcb",      "X11/XCB   (plus leger, asynchrone)"],
-
-            ["wayland",  "Wayland   (compositeurs modernes, sans X11)"],
-
-            ["headless", "Pas de fenetre (CI, serveurs, WSL sans ecran)"],
-
-        ],
-
-        default="xlib",
-
-        description="Backend de fenetrage Linux"
-
-    )
-
-
-
-
-
-# [ANNOTATION] [FILTER] Déclaration d’une option CLI influençant le build/configuration. [QUESTION] Quels autres fichiers consomment cette option et comment sa valeur est-elle propagée ?
-    newoption(
-
-        trigger="headless",
-
-        description="[Obsolete] Utiliser --options linux-backend=headless"
-
-    )
-
-
-
-
-
-    # ===== Option Windows : Desktop vs UWP ====================================
-
-    # Jenga v2.0.1 n'expose pas TargetOS.UWP; on route UWP via une option.
-
-# [ANNOTATION] [FILTER] Déclaration d’une option CLI influençant le build/configuration. [QUESTION] Quels autres fichiers consomment cette option et comment sa valeur est-elle propagée ?
-    newoption(
-
-        trigger="windows-runtime",
-
-        value="RUNTIME",
-
-        allowed=[
-
-            ["desktop", "Windows desktop classique (Win32)"],
-
-            ["uwp",     "Windows Runtime (UWP)"],
-
-        ],
-
-        default="desktop",
-
-        description="Runtime Windows cible (desktop ou UWP)"
-
-    )
-
-
-
-
-
-    # ===== Plateformes et architectures cibles ==================================
-
-# [ANNOTATION] [TYPE] Ensemble des OS cibles du workspace.
-    targetoses([
-
-        TargetOS.WINDOWS,
-
-        TargetOS.LINUX,
-
-        TargetOS.MACOS,
-
-        TargetOS.ANDROID,
-
-        TargetOS.IOS,
-
-        TargetOS.WEB,
-
-        TargetOS.HARMONYOS,
-
-        TargetOS.XBOX_SERIES,
-
-        TargetOS.XBOX_ONE,
-
-    ])
-
-
-
-
-
-# [ANNOTATION] [TYPE] Ensemble des architectures cibles du workspace. [QUESTION] Le mapping OS ↔ architecture est-il strictement validé ailleurs ?
-    targetarchs([
-
-        TargetArch.X86_64,   # Desktop (Windows, Linux, macOS, Xbox)
-
-        TargetArch.ARM64,    # Mobile  (Android, iOS)
-
-        TargetArch.WASM32,   # Web     (Emscripten)
-
-    ])
-
-
-
-
-
-# [ANNOTATION] [TEST] Bloc de tests Unitest. [QUESTION] `u.Compile()` compile-t-il seulement le runner de tests ou déclenche-t-il également leur exécution ailleurs ?
-    with unitest() as u:
-
-        u.Compile()
-
-
-
-
-
-# [ANNOTATION] [TYPE] Projet lancé par défaut. [DEPENDENCY] `Sandbox` doit être présent et correctement enregistré pour `jenga run`.
-    startproject("Sandbox")
-
-
-
-
-
-    # Backend de fenetrage Linux : le define NKENTSEU_FORCE_WINDOWING_*_ONLY est
-
-    # emis par _emit_linux_backend_defines() dans config/modules.jenga, appele
-
-    # par nkentseudependson() — donc par CHAQUE projet. Ne pas le poser ici :
-
-    # hors projet, defines() est ignore silencieusement par Jenga (essaye, sans
-
-    # effet ; l'explication complete est dans config/modules.jenga).
-
-
-
-
-
-    # =========================================================================
-
-    # Inclusion de chaque projet depuis son propre fichier .jenga
-
-    # L'ordre respecte la chaine de dependances.
-
-    # =========================================================================
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/Foundation/NKPlatform/NKPlatform.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/Foundation/NKPlatform/NKPlatform.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/Foundation/NKCore/NKCore.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/Foundation/NKCore/NKCore.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/System/NKLogger/NKLogger.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/System/NKLogger/NKLogger.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/Foundation/NKMath/NKMath.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/Foundation/NKMath/NKMath.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/Foundation/NKMemory/NKMemory.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/Foundation/NKMemory/NKMemory.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/Foundation/NKContainers/NKContainers.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/Foundation/NKContainers/NKContainers.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/Runtime/NKImage/NKImage.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/Runtime/NKImage/NKImage.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/Runtime/NKFont/NKFont.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/Runtime/NKFont/NKFont.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/Runtime/NKAudio/NKAudio.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/Runtime/NKAudio/NKAudio.jenga"):
-
-        pass
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/Runtime/NKMedia/NKMedia.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/Runtime/NKMedia/NKMedia.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/System/NKTime/NKTime.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/System/NKTime/NKTime.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/System/NKStream/NKStream.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/System/NKStream/NKStream.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/System/NKThreading/NKThreading.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/System/NKThreading/NKThreading.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/System/NKFileSystem/NKFileSystem.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/System/NKFileSystem/NKFileSystem.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/System/NKReflection/NKReflection.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/System/NKReflection/NKReflection.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/System/NKNetwork/NKNetwork.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/System/NKNetwork/NKNetwork.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/System/NKSerialization/NKSerialization.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/System/NKSerialization/NKSerialization.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Externals/Libs/NKGlad/NKGlad.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Externals/Libs/NKGlad/NKGlad.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Externals/Libs/NKGLSlang/NKGLSlang.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Externals/Libs/NKGLSlang/NKGLSlang.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Externals/Libs/NKSPIRVCross/NKSPIRVCross.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Externals/Libs/NKSPIRVCross/NKSPIRVCross.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Externals/Libs/NKMbedTLS/NKMbedTLS.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Externals/Libs/NKMbedTLS/NKMbedTLS.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Externals/Libs/pybind11/pybind11.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Externals/Libs/pybind11/pybind11.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/Runtime/NKEvent/NKEvent.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/Runtime/NKEvent/NKEvent.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/Runtime/NKWindow/NKWindow\.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/Runtime/NKWindow/NKWindow\.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/Runtime/NKSL/NKSL.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/Runtime/NKSL/NKSL.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/Runtime/NKCanvas/NKCanvas.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/Runtime/NKCanvas/NKCanvas.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/Runtime/NKRHI/NKRHI.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/Runtime/NKRHI/NKRHI.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/Runtime/NKUI/NKUI.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/Runtime/NKUI/NKUI.jenga"):
-
-        pass
-
-
-
-
-
-    # NKGui (framework UI immediat) + NKEditorKit (coquille d'editeur) : requis par NKCode.
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/Runtime/NKGui/NKGui.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/Runtime/NKGui/NKGui.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Engine/NKEditorKit/NKEditorKit.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Engine/NKEditorKit/NKEditorKit.jenga"):
-
-        pass
-
-    # Unkeny — moteur de jeu 2D sur NKCanvas. Il COMPOSE NKECS, NKCollision
-
-    # et NKPhysics ; il n'en reecrit rien. Son editeur vit dans
-
-    # Applications/UnkenyEditor : un moteur ne contient pas son outil.
-
-# [ANNOTATION] [SOURCE] Inclus : `Engine/Unkeny/Unkeny.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Engine/Unkeny/Unkeny.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKCode/NKCode.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKCode/NKCode.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NK3DModeler/NK3DModeler.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NK3DModeler/NK3DModeler.jenga"):
-
-        pass
-
-
-
-
-
-    # Integrations decouplees (ImGui / NKUI -> NKCanvas/NKRHI). Optionnelles :
-
-    # une app les lie seulement si elle en a besoin (ImGui n'est PAS tire dans
-
-    # le coeur de NKCanvas/NKRHI).
-
-# [ANNOTATION] [SOURCE] Inclus : `Integrations/ImGui/NKImGuiIntegration.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Integrations/ImGui/NKImGuiIntegration.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Integrations/NKUI/NKUIIntegration.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Integrations/NKUI/NKUIIntegration.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Integrations/NKGui/NKGuiIntegration.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Integrations/NKGui/NKGuiIntegration.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/Runtime/NKCamera/NKCamera.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/Runtime/NKCamera/NKCamera.jenga"):
-
-        pass
-
-
-
-
-
-    # NKCollision (collision 2D+3D, zero-STL).
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/Runtime/NKCollision/NKCollision.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/Runtime/NKCollision/NKCollision.jenga"):
-
-        pass
-
-
-
-
-
-    # NKPhysics (dynamique corps rigide 2D+3D, sur NKCollision).
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/Runtime/NKPhysics/NKPhysics.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/Runtime/NKPhysics/NKPhysics.jenga"):
-
-        pass
-
-
-
-
-
-    # NKAnimPhysics (pose physiquement correcte : masse/COM, equilibre, contacts,
-
-    # correction de pose et de clip). Extrait de NKRenderer/Tools/Animation le
-
-    # 2026-08-14 -- bloc de decision "substrats animation" du CLAUDE.md parent.
-
-    # CPU pur, headless, Foundation seule. NE depend PAS de NKPhysics aujourd hui :
-
-    # voir l en-tete de NKAnimPhysics.jenga, qui dit pourquoi, et ou brancher le
-
-    # pont le jour venu (NkRagdoll, jamais un second pont).
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/Runtime/NKAnimPhysics/NKAnimPhysics.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/Runtime/NKAnimPhysics/NKAnimPhysics.jenga"):
-
-        pass
-
-
-
-
-
-    # NKAnimation (substrat d animation : clips, blend 1D/2D, HFSM, reciblage,
-
-    # motion path, edition de pose-cles). Extrait de NKRenderer/Tools/Animation
-
-    # le 2026-08-14. Foundation seule ; le renderer n en garde que la facade
-
-    # de rendu et le debug-draw, et les CONSOMME.
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/Runtime/NKAnimation/NKAnimation.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/Runtime/NKAnimation/NKAnimation.jenga"):
-
-        pass
-
-
-
-
-
-    # NKNavigation (NavMesh + pathfinding A*, sur NKCollision -- raycast reel
-
-    # de sondage walkable). Voir Engine/Noge/ROADMAP.md, pilier Navigation IA.
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/Runtime/NKNavigation/NKNavigation.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/Runtime/NKNavigation/NKNavigation.jenga"):
-
-        pass
-
-
-
-
-
-    # NKXR (runtime VR/AR/XR : sessions, espaces, poses, entrees par actions,
-
-    # swapchains par oeil ; backend n°1 = simulateur desktop). Etage 0 de la
-
-    # mission XR_MISSION_IA.md.
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/Runtime/NKXR/NKXR.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/Runtime/NKXR/NKXR.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/Sandbox/Sandbox.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/Sandbox/Sandbox.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/ConquerorProto/ConquerorProto.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/ConquerorProto/ConquerorProto.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkAudioDemo/NkAudioDemo.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkAudioDemo/NkAudioDemo.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkCameraDemos/NkCameraDemos.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkCameraDemos/NkCameraDemos.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Sandbox/System/NKFileSystem/NKFileSystemSandbox.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Sandbox/System/NKFileSystem/NKFileSystemSandbox.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Sandbox/System/NKLogger/NKLoggerSandbox.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Sandbox/System/NKLogger/NKLoggerSandbox.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Sandbox/System/NKReflection/NKReflectionSandbox.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Sandbox/System/NKReflection/NKReflectionSandbox.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Sandbox/System/NKNetwork/NKNetworkSandbox.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Sandbox/System/NKNetwork/NKNetworkSandbox.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/Runtime/NKRenderer/NKRenderer.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/Runtime/NKRenderer/NKRenderer.jenga"):
-
-        pass
-
-
-
-
-
-    # ===== Sous-systeme IA (Kernel/AI) — construit bottom-up =====
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/AI/NKTensor/NKTensor.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/AI/NKTensor/NKTensor.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/AI/NKAutograd/NKAutograd.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/AI/NKAutograd/NKAutograd.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/AI/NKNN/NKNN.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/AI/NKNN/NKNN.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/AI/NKOptim/NKOptim.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/AI/NKOptim/NKOptim.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/AI/NKData/NKData.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/AI/NKData/NKData.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/AI/NKTrain/NKTrain.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/AI/NKTrain/NKTrain.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/AI/NKInfer/NKInfer.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/AI/NKInfer/NKInfer.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/AI/NKRL/NKRL.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/AI/NKRL/NKRL.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/AI/NKAgent/NKAgent.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/AI/NKAgent/NKAgent.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/AI/NKEvolve/NKEvolve.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/AI/NKEvolve/NKEvolve.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/AI/NKCivilization/NKCivilization.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/AI/NKCivilization/NKCivilization.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/AI/NKEmbodied/NKEmbodied.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/AI/NKEmbodied/NKEmbodied.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/AI/NKGen/NKGen.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/AI/NKGen/NKGen.jenga"):
-
-        pass
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/AI/NKGpt/NKGpt.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/AI/NKGpt/NKGpt.jenga"):
-
-        pass
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/AI/NKSpeech/NKSpeech.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/AI/NKSpeech/NKSpeech.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKTensorDemo/NKTensorDemo.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKTensorDemo/NKTensorDemo.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkSLComputeCheck/NkSLComputeCheck.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkSLComputeCheck/NkSLComputeCheck.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkGpuProbe/NkGpuProbe.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkGpuProbe/NkGpuProbe.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkComputeNkSL/NkComputeNkSL.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkComputeNkSL/NkComputeNkSL.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkTensorGpuTest/NkTensorGpuTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkTensorGpuTest/NkTensorGpuTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKGpuBenchTest/NKGpuBenchTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKGpuBenchTest/NKGpuBenchTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKConvBenchTest/NKConvBenchTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKConvBenchTest/NKConvBenchTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKConvResidentBench/NKConvResidentBench.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKConvResidentBench/NKConvResidentBench.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKMlpResidentBench/NKMlpResidentBench.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKMlpResidentBench/NKMlpResidentBench.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKMnistGpuTrain/NKMnistGpuTrain.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKMnistGpuTrain/NKMnistGpuTrain.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKRebasinTest/NKRebasinTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKRebasinTest/NKRebasinTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKMnistCnnGpuTrain/NKMnistCnnGpuTrain.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKMnistCnnGpuTrain/NKMnistCnnGpuTrain.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKTransformerTest/NKTransformerTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKTransformerTest/NKTransformerTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKGptTrain/NKGptTrain.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKGptTrain/NKGptTrain.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKIlyana/NKIlyana.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKIlyana/NKIlyana.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKAutogradTest/NKAutogradTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKAutogradTest/NKAutogradTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKNNTest/NKNNTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKNNTest/NKNNTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKConvTest/NKConvTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKConvTest/NKConvTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKDataTest/NKDataTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKDataTest/NKDataTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKBpeTest/NKBpeTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKBpeTest/NKBpeTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKLlamaBlockTest/NKLlamaBlockTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKLlamaBlockTest/NKLlamaBlockTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKRebasinTransformer/NKRebasinTransformer.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKRebasinTransformer/NKRebasinTransformer.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKTrainTest/NKTrainTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKTrainTest/NKTrainTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKFp16Test/NKFp16Test.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKFp16Test/NKFp16Test.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKRnnCtcTest/NKRnnCtcTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKRnnCtcTest/NKRnnCtcTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKASRTest/NKASRTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKASRTest/NKASRTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKImageCodecTest/NKImageCodecTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKImageCodecTest/NKImageCodecTest.jenga"):
-
-        pass
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkEditableMeshDemo/NkEditableMeshDemo.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkEditableMeshDemo/NkEditableMeshDemo.jenga"):
-
-        pass
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkLocomotionDemo/NkLocomotionDemo.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkLocomotionDemo/NkLocomotionDemo.jenga"):
-
-        pass
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkAssetIODemo/NkAssetIODemo.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkAssetIODemo/NkAssetIODemo.jenga"):
-
-        pass
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkFBXParityDemo/NkFBXParityDemo.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkFBXParityDemo/NkFBXParityDemo.jenga"):
-
-        pass
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkSVGImportDemo/NkSVGImportDemo.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkSVGImportDemo/NkSVGImportDemo.jenga"):
-
-        pass
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKMeshAITest/NKMeshAITest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKMeshAITest/NKMeshAITest.jenga"):
-
-        pass
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKEditMeshHarness/NKEditMeshHarness.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKEditMeshHarness/NKEditMeshHarness.jenga"):
-
-        pass
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkAnimPhysTest/NkAnimPhysTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkAnimPhysTest/NkAnimPhysTest.jenga"):
-
-        pass
-
-    # NkMatInventaireTest : banc ARRETE (cc6aba5b), RETIRE du workspace le 17/08.
-
-    # Il echoue au lien PAR CONSTRUCTION -- 118 symboles Demo3DHost* definis dans
-
-    # NkDemo3D.cpp, jamais compile ici -- et c'etait documente dans son en-tete
-
-    # d'arret : ces 118 symboles SONT la mesure de la dette C (lire un .nkmat
-
-    # tire toute la pile d'interface). Le laisser enregistre faisait echouer le
-
-    # build complet de main pour tout le monde (trouve par l'agent Ilyana).
-
-    # NE PAS le « reparer » en ajoutant NkDemo3D.cpp a ses sources : compiler
-
-    # toute la pile d'interface a chaque build est precisement le cout qui a
-
-    # fait arreter ce banc. Ses sources restent dans Applications/ avec leur
-
-    # en-tete d'arret ; il se re-enregistre le jour ou Demo3DHost devient une
-
-    # bibliotheque -- il linkera alors sans une ligne de plus.
-
-# [ANNOTATION] [FILTER] Projet volontairement retiré du graphe actif. [QUESTION] Quelle condition permettrait officiellement sa réactivation ?
-    # with include("Applications/NkMatInventaireTest/NkMatInventaireTest.jenga"):
-
-    #     pass
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkMicRecord/NkMicRecord.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkMicRecord/NkMicRecord.jenga"):
-
-        pass
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKSpeechTest/NKSpeechTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKSpeechTest/NKSpeechTest.jenga"):
-
-        pass
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKTTSTrain/NKTTSTrain.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKTTSTrain/NKTTSTrain.jenga"):
-
-        pass
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkVoiceLoopDemo/NkVoiceLoopDemo.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkVoiceLoopDemo/NkVoiceLoopDemo.jenga"):
-
-        pass
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKSpeechFeatureDemo/NKSpeechFeatureDemo.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKSpeechFeatureDemo/NKSpeechFeatureDemo.jenga"):
-
-        pass
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKMediaTest/NKMediaTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKMediaTest/NKMediaTest.jenga"):
-
-        pass
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkVideoReadTest/NkVideoReadTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkVideoReadTest/NkVideoReadTest.jenga"):
-
-        pass
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkAudioPlayer/NkAudioPlayer.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkAudioPlayer/NkAudioPlayer.jenga"):
-
-        pass
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkVideoPlayer/NkVideoPlayer.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkVideoPlayer/NkVideoPlayer.jenga"):
-
-        pass
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKOpusRef/NKOpusRef.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKOpusRef/NKOpusRef.jenga"):
-
-        pass
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKVideoTest/NKVideoTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKVideoTest/NKVideoTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKInferTest/NKInferTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKInferTest/NKInferTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKGGUFInspectTest/NKGGUFInspectTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKGGUFInspectTest/NKGGUFInspectTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKLLMInferTest/NKLLMInferTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKLLMInferTest/NKLLMInferTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKQwenTokenizerTest/NKQwenTokenizerTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKQwenTokenizerTest/NKQwenTokenizerTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKQwen2BackwardTest/NKQwen2BackwardTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKQwen2BackwardTest/NKQwen2BackwardTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKQwen2SftTest/NKQwen2SftTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKQwen2SftTest/NKQwen2SftTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKQ4MatmulTest/NKQ4MatmulTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKQ4MatmulTest/NKQ4MatmulTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKQwen2GpuTest/NKQwen2GpuTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKQwen2GpuTest/NKQwen2GpuTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKQwen2Chat/NKQwen2Chat.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKQwen2Chat/NKQwen2Chat.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKQwen2SftGpuTest/NKQwen2SftGpuTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKQwen2SftGpuTest/NKQwen2SftGpuTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKQwen2Train/NKQwen2Train.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKQwen2Train/NKQwen2Train.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKQwen2Ask/NKQwen2Ask.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKQwen2Ask/NKQwen2Ask.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKRLTest/NKRLTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKRLTest/NKRLTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKAgentTest/NKAgentTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKAgentTest/NKAgentTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKAgentLLMTest/NKAgentLLMTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKAgentLLMTest/NKAgentLLMTest.jenga"):
-
-        pass
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkAgentEcsDemo/NkAgentEcsDemo.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkAgentEcsDemo/NkAgentEcsDemo.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKEmbodiedTest/NKEmbodiedTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKEmbodiedTest/NKEmbodiedTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKEvolveTest/NKEvolveTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKEvolveTest/NKEvolveTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKEvolveNNTest/NKEvolveNNTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKEvolveNNTest/NKEvolveNNTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKCivilizationTest/NKCivilizationTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKCivilizationTest/NKCivilizationTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKCivilizationSocialTest/NKCivilizationSocialTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKCivilizationSocialTest/NKCivilizationSocialTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKCivilizationScaleTest/NKCivilizationScaleTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKCivilizationScaleTest/NKCivilizationScaleTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKGenTest/NKGenTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKGenTest/NKGenTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKVAETest/NKVAETest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKVAETest/NKVAETest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKMnistVAETest/NKMnistVAETest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKMnistVAETest/NKMnistVAETest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKMnistConvVAETest/NKMnistConvVAETest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKMnistConvVAETest/NKMnistConvVAETest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKConvVAETest/NKConvVAETest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKConvVAETest/NKConvVAETest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKDiffusionTest/NKDiffusionTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKDiffusionTest/NKDiffusionTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKVoxelGenTest/NKVoxelGenTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKVoxelGenTest/NKVoxelGenTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKObjectGenTest/NKObjectGenTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKObjectGenTest/NKObjectGenTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKGen3DTest/NKGen3DTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKGen3DTest/NKGen3DTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKGenMeshTest/NKGenMeshTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKGenMeshTest/NKGenMeshTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKSmoothMeshTest/NKSmoothMeshTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKSmoothMeshTest/NKSmoothMeshTest.jenga"):
-
-        pass
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKMatTypeResetTest/NKMatTypeResetTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKMatTypeResetTest/NKMatTypeResetTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKEditTargetTest/NKEditTargetTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKEditTargetTest/NKEditTargetTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKMeshRenderTest/NKMeshRenderTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKMeshRenderTest/NKMeshRenderTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/Model/Model.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/Model/Model.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkSLCheck/NkSLCheck.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkSLCheck/NkSLCheck.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKPA/NKPA.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKPA/NKPA.jenga"):
-
-        pass
-
-
-
-
-
-    # NKECS (ECS bas niveau archetypes) — DOIT etre enregistre AVANT Noge qui en
-
-    # depend (sinon %{NKECS.location} vide -> includes NKECS/* introuvables).
-
-# [ANNOTATION] [SOURCE] Inclus : `Kernel/Runtime/NKECS/NKECS.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Kernel/Runtime/NKECS/NKECS.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Engine/Noge/Noge.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Engine/Noge/Noge.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/Nogee/Nogee.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/Nogee/Nogee.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKEditorKitDemo/NKEditorKitDemo.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKEditorKitDemo/NKEditorKitDemo.jenga"):
-
-        pass
-
-
-
-
-
-    # Banc SANS FENETRE de NKEditorKit : resolution des roles de theme (le
-
-    # magenta du 18/08) et vocabulaire du backend graphique (Metal compris).
-
-    # Console, aucun GPU, code de sortie 0/1 -- il peut donc tourner partout.
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKEditorKitTest/NKEditorKitTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKEditorKitTest/NKEditorKitTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKUIDesign/NKUIDesign.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKUIDesign/NKUIDesign.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/ConquerorLab/ConquerorLab.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/ConquerorLab/ConquerorLab.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkRef/NkRef.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkRef/NkRef.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkAnimaEditor/NkAnimaEditor.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkAnimaEditor/NkAnimaEditor.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/ImGuiRef/ImGuiRef.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/ImGuiRef/ImGuiRef.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKGuiDrawTest/NKGuiDrawTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKGuiDrawTest/NKGuiDrawTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKGuiDemo/NKGuiDemo.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKGuiDemo/NKGuiDemo.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKViewportDemo/NKViewportDemo.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKViewportDemo/NKViewportDemo.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/PV3DE/PV3DE.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/PV3DE/PV3DE.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/Pong/Pong.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/Pong/Pong.jenga"):
-
-        pass
-
-
-
-
-
-    # TODO(Songoo) : migration rendu GL -> NKCanvas a FINIR (12 scenes UI utilisent encore
-
-    # Render/GLContext|GLRenderer2D|Texture2D|FontAtlas supprimes). Desactive du build pour
-
-    # ne pas casser `jenga build`. Le code source reste dans main ; reactiver apres migration.
-
-# [ANNOTATION] [FILTER] Projet volontairement retiré du graphe actif. [QUESTION] Quelle condition permettrait officiellement sa réactivation ?
-    # with include("Applications/Songoo/Songoo.jenga"):
-
-    #     pass
-
-# [ANNOTATION] [FILTER] Inclusion explicitement désactivée. [QUESTION] Cette désactivation est-elle temporaire ou doit-elle devenir une vraie option de build ?
-    if False:
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/Songoo/Songoo.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-        with include("Applications/Songoo/Songoo.jenga"):
-
-            pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/Nkoung/Nkoung.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/Nkoung/Nkoung.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/Mou/Mou.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/Mou/Mou.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkImeTest/NkImeTest.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkImeTest/NkImeTest.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkImageDemo/NkImageDemo.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkImageDemo/NkImageDemo.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/RihenDefi/RihenDefi.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/RihenDefi/RihenDefi.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkAudioECSDemo/NkAudioECSDemo.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkAudioECSDemo/NkAudioECSDemo.jenga"):
-
-        pass
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkNetWorldDemo/NkNetWorldDemo.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkNetWorldDemo/NkNetWorldDemo.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkNavDemo/NkNavDemo.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkNavDemo/NkNavDemo.jenga"):
-
-        pass
-
-
-
-
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkNavCoreDemo/NkNavCoreDemo.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkNavCoreDemo/NkNavCoreDemo.jenga"):
-
-        pass
-
-
-
-    # Jalon G2.3 Noge : scripting C++ natif hot-reload (DLL) — démo console
-
-    # (compile un script en .dll a runtime, hot-reload avec etat preserve).
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkHotReloadDemo/NkHotReloadDemo.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkHotReloadDemo/NkHotReloadDemo.jenga"):
-
-        pass
-
-
-
-    # Jalon G2.1 Noge : systeme ECS UI in-game (HUD) — demo console headless
-
-    # (NKCanvas backend Software CPU + NKFont embarque, assertions de pixels).
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkUIHudDemo/NkUIHudDemo.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkUIHudDemo/NkUIHudDemo.jenga"):
-
-        pass
-
-
-
-
-
-    # Serie d'apprentissage : concevoir une app 3D avec NKRenderer pas a pas
-
-    # (5 etapes/projets : fenetre -> renderer -> scene -> camera -> meshes custom).
-
-    # Voir Tutoriels3D/README.md.
-
-# [ANNOTATION] [SOURCE] Inclus : `Tutoriels3D/Tutoriels3D.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Tutoriels3D/Tutoriels3D.jenga"):
-
-        pass
-
-
-
-
-
-    # Etage 0 XR : scene NKRenderer en stereo SIMULEE via NKXR (simulateur
-
-    # desktop, souris = tete). Voir XR_MISSION_IA.md.
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKXRDemo/NKXRDemo.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKXRDemo/NKXRDemo.jenga"):
-
-        pass
-
-
-
-
-
-    # Etage 3 XR : realite augmentee a marqueurs (camera + NkArSession).
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NKARDemo/NKARDemo.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NKARDemo/NKARDemo.jenga"):
-
-        pass
-
-
-
-    # GemCrush — SEULEMENT si son .jenga est la. Sur cette branche le dossier
-
-    # n'a jamais ete commite (il l'est sur main) : depuis f9b68097 (2026-09-01)
-
-    # un clone frais — donc tout runner GitHub Actions — echouait des le
-
-    # chargement du workspace (« External file not found »), quelle que soit
-
-    # la cible demandee. Constate le 2026-09-04 sur le build macOS de NKCode.
-
-# [ANNOTATION] [FILTER] Inclusion conditionnelle selon la présence physique du fichier. [RISK] Deux clones du dépôt peuvent donc produire des graphes de workspace différents.
-    if os.path.isfile(os.path.join(_WORKSPACE_ROOT, "Applications", "Gemcrush", "GemCrush.jenga")):
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/Gemcrush/GemCrush.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-        with include("Applications/Gemcrush/GemCrush.jenga"):
-
-            pass
-
-    # Les trois jeux de plateau, batis sur la coquille moderne NkCanvasApp.
-
-    # Ils servent aussi de PREUVE a cette coquille : une base qui n a qu un
-
-    # seul consommateur ne prouve rien sur sa reutilisabilite.
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkDames/NkDames.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkDames/NkDames.jenga"):
-
-        pass
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkEchecs/NkEchecs.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkEchecs/NkEchecs.jenga"):
-
-        pass
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/NkLudo/NkLudo.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/NkLudo/NkLudo.jenga"):
-
-        pass
-
-    # L'editeur d'Unkeny. Il vit ici, pas dans Engine : un moteur ne
-
-    # contient pas son outil.
-
-# [ANNOTATION] [SOURCE] Inclus : `Applications/UnkenyEditor/UnkenyEditor.jenga`. [DEPENDENCY] L’enregistrement crée une dépendance de workspace vers ce sous-projet.
-    with include("Applications/UnkenyEditor/UnkenyEditor.jenga"):
-
-        pass
+import os
 ```
 
-## 5. Questions détaillées par domaine
+### Annotation
 
-### 5.1 Types
+**Type :** configuration / DSL Jenga / dépendances Python.
 
-- Quels sont les types réellement créés par `workspace()`, `unitest()`, `include()` et les différentes fonctions de configuration ?
-- `nkentseutoolchain()` crée-t-il une toolchain, sélectionne-t-il une toolchain existante, ou configure-t-il plusieurs toolchains par défaut ?
-- Les projets inclus utilisent-ils tous le même dialecte C++ ou chaque `.jenga` peut-il le surcharger ?
+**Sources :** aucune source C++ déclarée ici.
 
-### 5.2 Sources
+**Dépendances :**
+- `Jenga` : API du DSL utilisé pour définir le projet ;
+- `jengaconfig` : configuration partagée ;
+- `os` : accès aux variables d'environnement.
 
-- Quelle est la source de vérité pour `config/modules.jenga`, `config/toolchain.jenga`, `config/graphics.jenga` et `config/wayland.jenga` ?
-- Quelle partie de la configuration est héritée du workspace et quelle partie est locale au projet ?
-- Des fichiers `.jenga` inclus ajoutent-ils eux-mêmes d'autres `useconfig()` ?
+**Filtre :** aucun.
 
-### 5.3 Dépendances
+**Tests :** aucun.
 
-- Les commentaires comme « `NKECS` doit être enregistré avant `Noge` » reflètent-ils une vraie dépendance du resolver ou uniquement une dépendance d'enregistrement ?
-- Existe-t-il des cycles potentiels dans les dépendances des modules ?
-- L'ordre des `include()` peut-il être réduit si le resolver effectue réellement un tri topologique comme décrit par le guide développeur ?
-- Quels modules sont des feuilles de la chaîne, et lesquels sont réellement des bibliothèques partagées réutilisables ?
+### Questionnement
 
-### 5.4 Filtres
+> `?` Quelles variables sont réellement fournies par `jengaconfig` ?
+>
+> Le fichier utilise plus loin `TC_WINDOWS`, `VULKAN_INCLUDE`, `VULKAN_LIB` et `WANT_VULKAN`, mais leur définition n'est pas visible dans cet extrait.
 
-- `linux-backend` agit-il uniquement sur Linux ou peut-il influencer la résolution de bibliothèques sur d'autres plateformes ?
-- `windows-runtime` modifie-t-il seulement la génération du projet Windows ou également les bibliothèques liées ?
-- `if os.path.isfile(...)` doit-il être remplacé par une option explicite afin de garantir un graphe reproductible en CI ?
-- Les projets commentés/retirés sont-ils des artefacts obsolètes ou des travaux suspendus ?
+---
 
-### 5.5 Tests
+## 3. Liste des bibliothèques GLSLang Windows
 
-- Quelle commande exacte lance les tests Unitest après `u.Compile()` ?
-- Les applications nommées `*Test`, `*BenchTest`, `*Harness` sont-elles toutes des suites de test, des démonstrateurs ou des bancs de performance ?
-- Quels tests sont obligatoires dans CI et lesquels sont optionnels ou expérimentaux ?
+```py
+_GLSLANG_LIBS_WINDOWS = [
+    "glslang", "SPIRV", "MachineIndependent", "GenericCodeGen",
+    "glslang-default-resource-limits",
+]
+```
 
-## 6. Constats particuliers
+### Annotation
 
-### `dutc(enable=True)` / `dute(enable=True)`
+**Type :** variable Python contenant une liste de bibliothèques.
 
-Ces deux éléments sont les plus explicitement marqués comme incompris dans le fichier d'origine. Ils doivent rester marqués `?` tant que leur implémentation ou leur documentation Jenga interne n'a pas été examinée.
+**Sources :** aucune.
 
-### Projet `Songoo`
+**Dépendances :** bibliothèques GLSLang/SPIR-V destinées au linking si cette liste est consommée plus loin.
 
-Le projet est volontairement désactivé via `if False`. L'annotation doit donc le classer comme **filtre/désactivation statique**, et non comme une simple dépendance manquante.
+**Filtre :** le nom de la variable indique Windows, mais le filtre effectif n'est pas ici.
 
-### Projet `Gemcrush`
+**Tests :** aucun.
 
-Le test `os.path.isfile(...)` constitue une **condition de présence physique**. C'est utile pour éviter un échec du chargement sur une branche où le dossier n'est pas commité, mais cela signifie aussi que le workspace n'a pas exactement le même graphe sur tous les clones.
+### Attention
 
-### `NkMatInventaireTest`
+Cette déclaration **ne signifie pas à elle seule que les bibliothèques sont liées**. C'est seulement une liste Python.
 
-Le fichier explique explicitement pourquoi ce banc n'est plus enregistré : son lien casserait le build global et son problème est présenté comme une dette structurelle. Il faut donc le classer comme **test/banc suspendu documenté**, pas comme oubli.
+> `?` L'extrait ne montre pas où `_GLSLANG_LIBS_WINDOWS` est effectivement utilisé.
 
-## 7. Conclusion
+---
 
-Le fichier fourni est déjà riche en commentaires, mais il mélange plusieurs niveaux de documentation :
+## 4. Détection de MinGW
 
-1. documentation fonctionnelle du framework ;
-2. configuration du workspace ;
-3. inventaire des modules ;
-4. règles d'ordre de dépendances ;
-5. historique de décisions techniques ;
-6. exceptions temporaires ou permanentes.
+```py
+_IS_MINGW = "mingw" in TC_WINDOWS.lower()
+```
 
-La présente version les distingue sans supprimer le contenu original. Les zones marquées `?` sont volontairement conservées comme questions ouvertes, car le fichier seul ne permet pas de déduire avec certitude leur sémantique.
+### Annotation
+
+**Type :** variable de configuration calculée en Python.
+
+**Dépendance :** `TC_WINDOWS`.
+
+**Filtre :** aucun `filter()` ici.
+
+**Effet :** détermine si la toolchain Windows contient `mingw` dans son nom.
+
+### Questionnement
+
+> `?` Où `_IS_MINGW` est-il utilisé ensuite ?
+>
+> Son usage n'est pas visible dans l'extrait fourni.
+
+---
+
+## 5. Activation conditionnelle de TLS
+
+```py
+_TLS_ON = os.getenv("NK_ENABLE_TLS", "").strip().lower() in ("1", "true", "on", "yes", "mbedt>")
+```
+
+### Annotation
+
+**Type :** option de configuration obtenue depuis l'environnement.
+
+**Source de décision :** variable d'environnement `NK_ENABLE_TLS`.
+
+**Dépendances conditionnelles :** TLS / mbed-TLS.
+
+**Filtre :** pas encore un `filter()` Jenga ; c'est une condition Python.
+
+### Point à marquer `?`
+
+La dernière valeur visible :
+
+```text
+"mbedt>"
+```
+
+semble tronquée dans l'extrait reçu.
+
+> `?` **Ne pas corriger silencieusement cette valeur.** Il faut retrouver le fichier original pour connaître la valeur complète.
+
+---
+
+## 6. Dépendance TLS conditionnelle
+
+```py
+_TLS_DEPS = ["NKMbedTLS"] if _TLS_ON else []
+```
+
+### Annotation
+
+**Type :** liste Python de dépendances.
+
+**Dépendances :**
+- si TLS activé → `NKMbedTLS` ;
+- sinon → aucune dépendance TLS dans cette variable.
+
+**Filtre :** condition Python, pas `filter()` Jenga.
+
+**Sources :** aucune source C++ directe.
+
+### Lecture logique
+
+```text
+NK_ENABLE_TLS
+      ↓
+   _TLS_ON
+      ↓
+ _TLS_DEPS
+      ↓
+NKMbedTLS si activé
+```
+
+> `?` Où `_TLS_DEPS` est-il injecté dans la configuration du projet ?
+
+---
+
+## 7. Bibliothèques Windows liées au TLS
+
+```py
+_TLS_WIN_LINKS = ["bcrypt"] if _TLS_ON else []
+```
+
+### Annotation
+
+**Type :** liste Python de bibliothèques de linking.
+
+**Dépendance système :** `bcrypt` si TLS est activé.
+
+**Filtre :** condition Python via `_TLS_ON`.
+
+**Tests :** aucun.
+
+> `?` L'extrait fourni ne montre pas l'appel `links(_TLS_WIN_LINKS)` éventuel. Il faut donc distinguer **préparer une liste** et **effectivement la lier**.
+
+---
+
+# 8. Déclaration du projet
+
+```py
+with project("NKIlyana"):
+```
+
+## Annotation principale
+
+C'est l'ouverture du **projet Jenga** nommé `NKIlyana`.
+
+### Type
+
+`project(...)` crée le contexte du projet, mais **ne suffit pas à déterminer son type final**.
+
+Le type est déterminé par la primitive utilisée dans ce bloc : ici, `consoleapp()`.
+
+### Réponse à la question centrale
+
+> **« Où est décidé que NKIlyana est une bibliothèque statique ? »**
+
+Dans l'extrait fourni : **nulle part**.
+
+Le fichier contient :
+
+```py
+consoleapp()
+```
+
+et ne contient pas :
+
+```py
+staticlib()
+```
+
+Donc, pour **NKIlyana lui-même**, la lecture correcte est :
+
+```text
+project("NKIlyana")
+        ↓
+   consoleapp()
+        ↓
+application console
+```
+
+---
+
+# 9. Type réel du projet
+
+```py
+consoleapp()
+```
+
+## Annotation
+
+### **TYPE**
+
+Le projet est déclaré comme une **application console**.
+
+### Ce que cela exclut
+
+Cette ligne ne déclare pas :
+
+```py
+staticlib()
+```
+
+ni :
+
+```py
+sharedlib()
+```
+
+### Questionnement
+
+> `?` Pour une dépendance comme `NKTensor`, le type doit être cherché dans **son propre `.jenga`**, pas dans `nkentseudependson(...)`.
+
+---
+
+# 10. Langage
+
+```py
+language("C++")
+```
+
+### Annotation
+
+**Type :** propriété du projet.
+
+**Sources :** les sources déclarées ensuite sont C++.
+
+**Dépendances :** aucune par cette ligne.
+
+**Filtre :** aucun.
+
+**Tests :** aucun.
+
+---
+
+# 11. Standard C++
+
+```py
+cppdialect("C++17")
+```
+
+### Annotation
+
+**Type :** configuration de compilation.
+
+Le projet utilise le dialecte :
+
+```text
+C++17
+```
+
+### Délégation
+
+Le fichier impose le dialecte au projet, mais le compilateur concret dépend de la toolchain sélectionnée.
+
+> `?` L'identité exacte du compilateur pour chaque plateforme n'est pas définie ici.
+
+---
+
+# 12. Emplacement du projet
+
+```py
+location(".")
+```
+
+### Annotation
+
+**Type :** emplacement logique du projet.
+
+Cela ne définit **ni** le dossier des objets, **ni** le dossier du binaire. Ces deux éléments sont déclarés plus loin par `objdir()` et `targetdir()`.
+
+---
+
+# 13. Sources
+
+```py
+files(["src/main.cpp"])
+```
+
+## Annotation
+
+### **SOURCES**
+
+Source locale explicitement déclarée :
+
+```text
+src/main.cpp
+```
+
+### Dépendances indirectes
+
+Les autres modules ne sont pas ajoutés comme sources locales ; ils sont référencés via `nkentseudependson(...)`.
+
+### Questionnement
+
+> `?` Y a-t-il d'autres sources ajoutées plus loin ?
+>
+> L'extrait fourni ne le permet pas de l'affirmer.
+
+---
+
+# 14. Dépendances Nkentseu
+
+```py
+nkentseudependson(
+    ["NKGpt", "NKTrain", "NKNN", "NKData", "NKOptim", "NKAutograd", "NKTensor", "NKRHI",
+     "NKWindow", "NKGlad", "NKMath", "NKTime", "NKStream", "NKFileSystem",
+     "NKLogger", "NKContainers", "NKMemory", "NKCore", "NKPlatform",
+     "NKThreading", "NKGLSlang", "NKSPIRVCross", "NKImage", "NKMedia", "NKFont", "NKNetwo..."],
+    extra_includes=["src", "%{NKGlad.location}/include"]
+                   + ([VULKAN_INCLUDE] if VULKAN_INCLUDE else []),
+    extra_defines=[f"NKENTSEU_ENABLE_VULKAN_BACKEND={1 if WANT_VULKAN else 0}"],
+)
+```
+
+## Annotation
+
+### **DÉPENDANCES**
+
+Le projet consomme notamment :
+
+```text
+NKGpt
+NKTrain
+NKNN
+NKData
+NKOptim
+NKAutograd
+NKTensor
+NKRHI
+NKWindow
+NKGlad
+NKMath
+NKTime
+NKStream
+NKFileSystem
+NKLogger
+NKContainers
+NKMemory
+NKCore
+NKPlatform
+NKThreading
+NKGLSlang
+NKSPIRVCross
+NKImage
+NKMedia
+NKFont
+NKNetwork ?
+```
+
+La fin de la liste est tronquée (`NKNetwo...`).
+
+> `?` **Nom exact de la dernière dépendance à confirmer.**
+
+### Ce que ce bloc décide
+
+Il décide que `NKIlyana` **dépend** de ces modules.
+
+### Ce qu'il ne décide pas
+
+Il ne permet pas, à lui seul, de conclure :
+
+```text
+NKTensor = StaticLib
+NKNN = StaticLib
+NKGpt = StaticLib
+```
+
+Pour répondre à cette question, il faut ouvrir le `.jenga` de chaque dépendance et chercher son propre `project(...)` et sa primitive de type :
+
+```py
+staticlib()
+```
+
+ou :
+
+```py
+sharedlib()
+```
+
+ou :
+
+```py
+consoleapp()
+```
+
+etc.
+
+---
+
+# 15. Includes supplémentaires
+
+```py
+extra_includes=["src", "%{NKGlad.location}/include"]
+```
+
+### Annotation
+
+**Type :** chemins d'inclusion supplémentaires.
+
+**Sources :**
+- `src`
+- le dossier `include` de `NKGlad` via `%{NKGlad.location}`.
+
+**Dépendance :** `NKGlad` apparaît explicitement dans les dépendances.
+
+### Délégation
+
+La résolution de :
+
+```text
+%{NKGlad.location}
+```
+
+est laissée au système de variables/projets Jenga.
+
+> `?` La valeur physique exacte de `NKGlad.location` n'est pas visible ici.
+
+---
+
+# 16. Include Vulkan conditionnel
+
+```py
++ ([VULKAN_INCLUDE] if VULKAN_INCLUDE else [])
+```
+
+### Annotation
+
+**Type :** condition Python.
+
+Si `VULKAN_INCLUDE` existe :
+
+```text
+→ ajout du chemin Vulkan
+```
+
+Sinon :
+
+```text
+→ aucun chemin Vulkan ajouté
+```
+
+### Important
+
+Ce n'est pas un filtre Jenga de plateforme.
+
+Il faut distinguer :
+
+```py
+if VULKAN_INCLUDE:
+```
+
+et :
+
+```py
+with filter(...):
+```
+
+---
+
+# 17. Define Vulkan
+
+```py
+extra_defines=[f"NKENTSEU_ENABLE_VULKAN_BACKEND={1 if WANT_VULKAN else 0}"]
+```
+
+### Annotation
+
+**Type :** macro C/C++ de compilation.
+
+Deux valeurs possibles :
+
+```text
+WANT_VULKAN = vrai  → NKENTSEU_ENABLE_VULKAN_BACKEND=1
+WANT_VULKAN = faux  → NKENTSEU_ENABLE_VULKAN_BACKEND=0
+```
+
+### Délégation
+
+La définition de `WANT_VULKAN` n'est pas dans cet extrait.
+
+> `?` **Origine de `WANT_VULKAN` à rechercher dans `jengaconfig` ou la configuration globale.**
+
+---
+
+# 18. Répertoire des objets
+
+```py
+objdir("%{wks.location}/Build/Obj/%{cfg.buildcfg}-%{cfg.system}/%{prj.name}")
+```
+
+### Annotation
+
+**Type :** sortie intermédiaire de compilation.
+
+**Variables utilisées :**
+
+- `%{wks.location}` → workspace ;
+- `%{cfg.buildcfg}` → configuration ;
+- `%{cfg.system}` → système ;
+- `%{prj.name}` → projet.
+
+### Délégation
+
+Jenga résout ces variables pendant la génération/construction.
+
+---
+
+# 19. Répertoire de sortie
+
+```py
+targetdir("%{wks.location}/Build/Bin/%{cfg.buildcfg}-%{cfg.system}/%{prj.name}")
+```
+
+### Annotation
+
+**Type :** destination de l'artefact final.
+
+Comme le projet est un `consoleapp()`, l'artefact attendu est un exécutable adapté à la plateforme de compilation.
+
+---
+
+# 20. Filtre Windows
+
+L'extrait montre :
+
+```py
+with filter("system:Windows && !options:windows-runtime=uwp && !system:XboxSeries && !sys... "):
+```
+
+## Annotation
+
+### **FILTRE**
+
+Ce bloc s'applique à une cible Windows avec des exclusions explicites.
+
+Conditions visibles :
+
+```text
+system:Windows
+```
+
+ET :
+
+```text
+!options:windows-runtime=uwp
+```
+
+ET :
+
+```text
+!system:XboxSeries
+```
+
+La suite du filtre est tronquée.
+
+> `?` **Condition complète à retrouver dans le fichier original.**
+
+### Ce que filtre ce bloc
+
+Il ne configure pas toutes les plateformes de `NKIlyana`. Il ne s'applique qu'au sous-ensemble correspondant à la condition.
+
+---
+
+# 21. Toolchain Windows
+
+```py
+usetoolchain(TC_WINDOWS)
+```
+
+### Annotation
+
+**Type :** sélection de toolchain.
+
+**Dépendance/configuration externe :** `TC_WINDOWS`.
+
+### Délégation
+
+Le fichier dit en substance :
+
+```text
+« Dans ce contexte Windows, utilise la toolchain définie par TC_WINDOWS. »
+```
+
+Mais il ne dit pas ici quelle valeur concrète possède `TC_WINDOWS`.
+
+> `?` Origine de `TC_WINDOWS` à rechercher dans la configuration globale.
+
+---
+
+# 22. Defines Windows
+
+```py
+defines(["WIN32_LEAN_AND_MEAN", "_UNICODE", "UNICODE"])
+```
+
+### Annotation
+
+**Type :** macros de compilation.
+
+**Filtre :** actives à l'intérieur du filtre Windows visible.
+
+### Lecture
+
+```text
+Windows
+  ↓
+defines Windows
+```
+
+Ils ne sont pas nécessairement appliqués aux autres plateformes.
+
+---
+
+# 23. Répertoire des bibliothèques Vulkan
+
+```py
+if VULKAN_LIB:
+    libdirs([VULKAN_LIB])
+```
+
+### Annotation
+
+**Type :** chemin de recherche de bibliothèques pour le linker.
+
+**Condition :** Python `if` sur `VULKAN_LIB`.
+
+### Très important
+
+`libdirs()` **n'est pas** `staticlib()`.
+
+Il faut distinguer :
+
+```text
+libdirs(...)   → où chercher les bibliothèques
+links(...)     → quelles bibliothèques lier
+staticlib()    → quel type de projet construire
+```
+
+Cette distinction est centrale pour éviter une mauvaise annotation du fichier.
+
+---
+
+# 24. Préparation des liens Windows
+
+```py
+_WIN_LINKS = [
+    "NKGLSlang", "NKSPIRVCross",
+```
+
+### Annotation
+
+**Type :** liste Python destinée au linking.
+
+Bibliothèques visibles :
+
+```text
+NKGLSlang
+NKSPIRVCross
+```
+
+La suite du bloc est absente de l'extrait fourni.
+
+> `?` **Liste complète des bibliothèques Windows à confirmer.**
+
+> `?` **Présence d'un `links(_WIN_LINKS)` à confirmer dans la suite.**
+
+---
+
+# 25. Table de lecture globale
+
+| Catégorie | Dans `NKIlyana.jenga` | Commentaire |
+|---|---|---|
+| **Type** | `consoleapp()` | Décision explicite : application console |
+| **Sources** | `src/main.cpp` | Source locale visible |
+| **Dépendances** | `nkentseudependson(...)` | Nombreux modules Nkentseu |
+| **Filtres** | `filter("system:Windows ...")` | Configuration conditionnelle Windows |
+| **Tests** | `?` | Aucun test visible dans l'extrait |
+| **Toolchain** | `usetoolchain(TC_WINDOWS)` | Déléguée à une variable externe |
+| **Includes** | `extra_includes` | `src`, `NKGlad/include`, Vulkan éventuel |
+| **Defines** | `extra_defines`, `defines` | Vulkan + Windows |
+| **Lib search path** | `libdirs(VULKAN_LIB)` | Répertoire de recherche du linker |
+| **Linking** | `_WIN_LINKS` | Liste amorcée, suite absente |
+| **StaticLib** | `?` pour les dépendances | À vérifier dans leurs propres `.jenga` |
+
+---
+
+# 26. Ce que le fichier **déclare**
+
+NKIlyana déclare directement :
+
+1. un projet nommé `NKIlyana` ;
+2. un type de projet : `consoleapp()` ;
+3. le langage C++ ;
+4. le standard C++17 ;
+5. son emplacement ;
+6. `src/main.cpp` comme source ;
+7. ses dépendances Nkentseu ;
+8. des includes supplémentaires ;
+9. des defines ;
+10. des répertoires de sortie ;
+11. une configuration Windows ;
+12. une toolchain Windows via `TC_WINDOWS`.
+
+---
+
+# 27. Ce que le fichier **filtre**
+
+Le fichier applique un filtre Windows visible :
+
+```text
+system:Windows
+```
+
+avec au moins :
+
+```text
+!options:windows-runtime=uwp
+!system:XboxSeries
+```
+
+Le reste du filtre est tronqué.
+
+Il filtre donc **l'application de certaines configurations**, et non le type général du projet.
+
+---
+
+# 28. Ce que le fichier **délègue**
+
+NKIlyana délègue plusieurs décisions à d'autres couches :
+
+```text
+jengaconfig
+   ├── TC_WINDOWS ?
+   ├── VULKAN_INCLUDE ?
+   ├── VULKAN_LIB ?
+   └── WANT_VULKAN ?
+
+projets dépendants
+   ├── NKTensor.jenga
+   ├── NKNN.jenga
+   ├── NKTrain.jenga
+   ├── NKGpt.jenga
+   └── ...
+
+toolchain
+   └── usetoolchain(TC_WINDOWS)
+```
+
+---
+
+# 29. La question `StaticLib` : réponse précise
+
+## Pour `NKIlyana`
+
+La réponse est :
+
+```text
+NKIlyana n'est pas déclaré comme StaticLib ici.
+```
+
+La déclaration réelle est :
+
+```py
+with project("NKIlyana"):
+    consoleapp()
+```
+
+## Pour `NKTensor`, `NKNN`, etc.
+
+La réponse n'est **pas donnée par** :
+
+```py
+nkentseudependson(["NKTensor", "NKNN", ...])
+```
+
+Il faut ouvrir les fichiers correspondants et chercher :
+
+```py
+with project("NKTensor"):
+    staticlib()
+```
+
+ou une autre déclaration de type.
+
+### Règle d'analyse
+
+```text
+nom dans une dépendance
+        ≠
+type de projet
+```
+
+Le type se trouve dans la déclaration du projet concerné.
+
+---
+
+# 30. Tests
+
+### **TESTS**
+
+Aucun bloc de test n'est visible dans l'extrait fourni.
+
+On ne doit donc pas écrire :
+
+```text
+test = absent du dépôt
+```
+
+mais seulement :
+
+```text
+? Aucun test visible dans l'extrait fourni.
+```
+
+### Questionnement
+
+- Existe-t-il un `unitest()` dans une autre partie du fichier ?
+- `NKIlyana` possède-t-il un projet de test séparé ?
+- Les modules `NKTrain`, `NKGpt`, etc. ont-ils leurs propres tests ?
+
+---
+
+# 31. Checklist d'audit pour la suite
+
+Pour compléter l'analyse du module sans rien inventer :
+
+```text
+[ ] Lire la fin exacte du filtre Windows
+[ ] Lire la fin de la liste _WIN_LINKS
+[ ] Vérifier si _WIN_LINKS est passé à links(...)
+[ ] Vérifier où _TLS_DEPS est utilisé
+[ ] Vérifier où _TLS_WIN_LINKS est utilisé
+[ ] Identifier la définition de TC_WINDOWS
+[ ] Identifier la définition de WANT_VULKAN
+[ ] Identifier la définition de VULKAN_INCLUDE
+[ ] Identifier la définition de VULKAN_LIB
+[ ] Ouvrir NKTensor.jenga
+[ ] Ouvrir NKNN.jenga
+[ ] Ouvrir NKTrain.jenga
+[ ] Ouvrir NKGpt.jenga
+[ ] Rechercher staticlib() dans les dépendances
+[ ] Rechercher sharedlib() dans les dépendances
+[ ] Rechercher les tests associés
+```
+
+---
+
+# 32. Verdict final
+
+```text
+NKIlyana.jenga
+│
+├── TYPE
+│   └── consoleapp()
+│       └── application console
+│
+├── SOURCES
+│   └── src/main.cpp
+│
+├── DÉPENDANCES
+│   └── nkentseudependson(...)
+│       ├── NKGpt
+│       ├── NKTrain
+│       ├── NKNN
+│       ├── NKTensor
+│       └── ...
+│
+├── FILTRES
+│   └── Windows
+│       ├── pas UWP
+│       ├── pas XboxSeries
+│       └── reste du filtre : ?
+│
+├── CONFIGURATION DÉLÉGUÉE
+│   ├── TC_WINDOWS ?
+│   ├── WANT_VULKAN ?
+│   ├── VULKAN_INCLUDE ?
+│   └── VULKAN_LIB ?
+│
+├── TESTS
+│   └── ? non visibles dans l'extrait
+│
+└── STATICLIB
+    └── pas pour NKIlyana
+        └── ses dépendances doivent être inspectées séparément
+```
+
+## Conclusion
+
+> **NKIlyana.jenga est un excellent exemple de fichier qui orchestre un exécutable plutôt qu'un fichier qui définit à lui seul toute la nature du graphe de modules.**
+>
+> Il décide directement de son propre type (`consoleapp()`), de ses sources et d'une partie de sa configuration. Pour le type des modules qu'il consomme, il **délègue** aux `.jenga` de ces modules et/ou à la configuration centrale.
+>
+> `?` est conservé partout où le texte fourni est tronqué ou où une définition externe est nécessaire pour conclure.
