@@ -13,7 +13,7 @@ Prenez NKCanvas. Ouvrez son .jenga, relevez ses dépendances directes, puis cell
 * NKGlad;
 * NKThreading;
 
-Il faut construire `7 projets` à construire avant *NKCanvas*.
+Il faut construire `13 projets` à construire avant *NKCanvas*.
 
 ### Les dépenadances de **NKWindow** :
 * NKPlatform;
