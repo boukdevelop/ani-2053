@@ -19,7 +19,7 @@
 
 ### Le projet de démarrage
 
-* Le projet de démarrage est `__Unitest__`
+* Le projet de démarrage est `Sandbox`
 
 ### Le fichier racine du Workspace
 
