@@ -2,10 +2,10 @@
 
 Annoter un fichier ``.jenga`` :
 * Types;
-* Sources;
-* Dépendances;
+* Sources;  ?
+* Dépendances;  ?
 * Filtres;
-* Tets;
+* Tets; ?
 
 Marquer d'un `?` tout ce qui est incompréhensible.
 
@@ -18,27 +18,27 @@ Marquer d'un `?` tout ce qui est incompréhensible.
 
 from Jenga import *
 
-with workspace("kodesi"):
+with workspace("kodesi"):   # Source
     configurations(['Debug', 'Release'])
-    targetoses([TargetOS.WINDOWS])
-    targetarchs([TargetArch.X86_64])
+    targetoses([TargetOS.WINDOWS])  # Filtre
+    targetarchs([TargetArch.X86_64])    # Filtre
     
     # Default toolchain (auto-detected)
     # usetoolchain("host-gcc")
     
     # Uncomment to use Unitest testing framework
-    # with unitest() as u:
-    #     u.Precompiled()
+    with unitest() as u:    # ?
+        u.Precompiled()
     
     # Add your projects here
-    # with project("MyApp"):
-    #     consoleapp()
-    #     language("C++")
-    #     files(["src/**.cpp"])
+    with project("MyApp"):
+        consoleapp()
+        language("C++")
+        files(["src/**.cpp"])
 
     # Project: test_jenga
     with project("test_jenga"):
-        consoleapp()
+        consoleapp()    # Type
         language("C++")
         cppdialect("C++17")
         location("test_jenga")
