@@ -168,4 +168,4 @@ Status:         ✓ SUCCESS
 ---
 **REMARQUE :** Je remarque que la construction du projet a pris plus de temps que la dernière construction. Mais après reflexion, j'ai décidé de renettoyer le project et d'enlever de nouveau les links pour le reconstruire et le temps s'est encore réduis (je suis quitté de 6.49s à 5.26s ).
 
-Bref de mon point de vue il n'y a pas de différence !
+> Bref de mon point de vue il n'y a pas de différence à part ce léger décallage horaire !
