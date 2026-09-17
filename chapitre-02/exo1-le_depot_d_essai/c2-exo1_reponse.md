@@ -3,34 +3,47 @@
 Afin de mener à bien cette exercice, j'ai fait dans l'ordre ces différentes commandes :
 
 ## `git init` : afin d'initialiser mon depôt;
-## Puis, j'ai ajouter trois fichiers : 
+
 ```bash
-(venv) PS C:\Users\FRANCK\Desktop\ANI-2053\ani-2053\chapitre-02\exo1-le_depot_d_essai> ls
+FRANCK@DESKTOP-9ABFSKK MINGW64 ~/Desktop/cassure
+$ git init
+Initialized empty Git repository in C:/Users/FRANCK/Desktop/cassure/.git/
+```
 
+## Avant de commencer quoi que se soit, j'ai d'abord cloné mon depôt :
 
-    Répertoire : C:\Users\FRANCK\Desktop\ANI-2053\ani-2053\chapitre-02\exo1-le_depot_d_essai
-
-
-Mode                 LastWriteTime         Length Name                                                                                       
-----                 -------------         ------ ----                                                                                       
--a----         9/16/2026  11:06 PM            246 c2-exo1_reponse.md                                                                         
--a----         9/16/2026  11:05 PM              0 fichier_1.dart                                                                             
--a----         9/16/2026  11:05 PM              0 Fichier_2.cpp
+```bash
+$ git clone https://github.com/boukdevelop/cassures.git
+Cloning into 'cassures'...
+remote: Enumerating objects: 3, done.
+remote: Counting objects: 100% (3/3), done.
+remote: Total 3 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+Receiving objects: 100% (3/3), done.
 
 ```
+
+## Puis, j'ai ajouter trois fichiers : 
+```bash
+FRANCK@DESKTOP-9ABFSKK MINGW64 ~/Desktop/cassure/cassures (main)
+$ touch file1.txt file2.dart file3.cpp
+
+FRANCK@DESKTOP-9ABFSKK MINGW64 ~/Desktop/cassure/cassures (main)
+$ ls
+README.md  file1.txt  file2.dart  file3.cpp
+```
+
 ## J'ai vérifier l'état avec `git status` :
 
 ```bash
-(venv) PS C:\Users\FRANCK\Desktop\ANI-2053\ani-2053\chapitre-02\exo1-le_depot_d_essai> git status
-On branch master
-
-No commits yet
+$ git status
+On branch main
+Your branch is up to date with 'origin/main'.
 
 Untracked files:
   (use "git add <file>..." to include in what will be committed)
-        Fichier_2.cpp
-        c2-exo1_reponse.md
-        fichier_1.dart
+        file1.txt
+        file2.dart
+        file3.cpp
 
 nothing added to commit but untracked files present (use "git add" to track)
 ```
@@ -45,80 +58,115 @@ nothing added to commit but untracked files present (use "git add" to track)
 ### #1
 
 ```bash
-(venv) PS C:\Users\FRANCK\Desktop\ANI-2053\ani-2053\chapitre-02\exo1-le_depot_d_essai> git add .\fichier_1.dart
-(venv) PS C:\Users\FRANCK\Desktop\ANI-2053\ani-2053\chapitre-02\exo1-le_depot_d_essai> git commit -m "Ajout du premier fichier"
-[master (root-commit) 2d98c55] Ajout du premier fichier
+FRANCK@DESKTOP-9ABFSKK MINGW64 ~/Desktop/cassure/cassures (main)
+$ git add file1.txt
+$ git commit -m "Ajout du file 1"
+[main 4d094e6] Ajout du file 1
  1 file changed, 0 insertions(+), 0 deletions(-)
- create mode 100644 fichier_1.dart
+ create mode 100644 file1.txt
+
+FRANCK@DESKTOP-9ABFSKK MINGW64 ~/Desktop/cassure/cassures (main)
+$ git push
+Enumerating objects: 4, done.
+Counting objects: 100% (4/4), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 284 bytes | 284.00 KiB/s, done.
+Total 3 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+To https://github.com/boukdevelop/cassures.git
+   02a7c3e..4d094e6  main -> main
+
 ```
 
 ### #2
+
 ```bash
-(venv) PS C:\Users\FRANCK\Desktop\ANI-2053\ani-2053\chapitre-02\exo1-le_depot_d_essai> git add .\c2-exo1_reponse.md
-(venv) PS C:\Users\FRANCK\Desktop\ANI-2053\ani-2053\chapitre-02\exo1-le_depot_d_essai> git commit -m "Ajout du deuxième fichier"
-[master 75e6d6c] Ajout du deuxième fichier
- 1 file changed, 57 insertions(+)
- create mode 100644 c2-exo1_reponse.md
+FRANCK@DESKTOP-9ABFSKK MINGW64 ~/Desktop/cassure/cassures (main)
+$ git add file2.dart
+$ git commit -m "Add of file 2"
+[main efe006d] Add of file 2
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 file2.dart
+
+FRANCK@DESKTOP-9ABFSKK MINGW64 ~/Desktop/cassure/cassures (main)
+$ git push
+Enumerating objects: 3, done.
+Counting objects: 100% (3/3), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (2/2), 284 bytes | 284.00 KiB/s, done.
+Total 2 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+To https://github.com/boukdevelop/cassures.git
+   4d094e6..efe006d  main -> main
+
 ```
 
 ### #3
+
 ```bash
-(venv) PS C:\Users\FRANCK\Desktop\ANI-2053\ani-2053\chapitre-02\exo1-le_depot_d_essai> git add .\Fichier_2.cpp 
-(venv) PS C:\Users\FRANCK\Desktop\ANI-2053\ani-2053\chapitre-02\exo1-le_depot_d_essai> git commit -m "Ajout du troisième fichier"
-[master af3d2bc] Ajout du troisième fichier
+$ git add file3.cpp
+
+FRANCK@DESKTOP-9ABFSKK MINGW64 ~/Desktop/cassure/cassures (main)
+$ git commit -m "Add of file 3"
+[main ef292a7] Add of file 3
  1 file changed, 0 insertions(+), 0 deletions(-)
- create mode 100644 Fichier_2.cpp
+ create mode 100644 file3.cpp
+
+FRANCK@DESKTOP-9ABFSKK MINGW64 ~/Desktop/cassure/cassures (main)
+$ git push
+Enumerating objects: 3, done.
+Counting objects: 100% (3/3), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (2/2), 259 bytes | 259.00 KiB/s, done.
+Total 2 (delta 1), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+To https://github.com/boukdevelop/cassures.git
+   efe006d..ef292a7  main -> main
+
+
 ```
 
 ## Afin d'fficher l'historique en une ligne par commit. Puis affichez le graphe j'ai fait ces différentes commandes :
 
 * > `git log --oneline` pour afficher l'historique en une ligne :
 ```bash
-(venv) PS C:\Users\FRANCK\Desktop\ANI-2053\ani-2053\chapitre-02\exo1-le_depot_d_essai> git log --oneline --graph
-* af3d2bc (HEAD -> master) Ajout du troisième fichier
-* 75e6d6c Ajout du deuxième fichier
-* 2d98c55 Ajout du premier fichier
+$ git log --oneline
+ef292a7 (HEAD -> main, origin/main, origin/HEAD) Add of file 3
+efe006d Add of file 2
+4d094e6 Ajout du file 1
+02a7c3e Initial commit
+
 ```
 
 * > `git log --graph` pour afficher le graph :
 
 ```bash
-(venv) PS C:\Users\FRANCK\Desktop\ANI-2053\ani-2053\chapitre-02\exo1-le_depot_d_essai> git log --graph
-* commit af3d2bc9379d9481aa10c4d1d5c2c08b09542a08 (HEAD -> master)
+* commit ef292a725eb08581478b9e5d77ba344af2a1f8d7 (HEAD -> main, origin/main, or
+igin/HEAD)
 | Author: FRANCK <boukalafranck0@gmail.com>
-| Date:   Wed Sep 16 23:16:54 2026 +0200
-| 
-|     Ajout du troisième fichier
-| 
-* commit 75e6d6c0b48bd872751954f2789b6167915e9584
+| Date:   Thu Sep 17 06:51:46 2026 +0200
+|
+|     Add of file 3
+|
+* commit efe006d88817c273dd3e12a081c73a92266f3f72
 | Author: FRANCK <boukalafranck0@gmail.com>
-| Date:   Wed Sep 16 23:15:55 2026 +0200
-| 
-|     Ajout du deuxième fichier
-| 
-* commit 2d98c557c31b9e6f7e3a8743567d25ef1697f0d4
+| Date:   Thu Sep 17 06:51:03 2026 +0200
+|
+|     Add of file 2
+|
+* commit 4d094e6d610e84b2dffa59c580df2c6863fedc88
+| Author: FRANCK <boukalafranck0@gmail.com>
+| Date:   Thu Sep 17 06:49:35 2026 +0200
+|
+|     Ajout du file 1
+|
+* commit 02a7c3edb28f97f2e4b4d98e1a68bd07d5e3875e
   Author: FRANCK <boukalafranck0@gmail.com>
-  Date:   Wed Sep 16 23:13:49 2026 +0200
-  
-      Ajout du premier fichier
-(END)
-* commit af3d2bc9379d9481aa10c4d1d5c2c08b09542a08 (HEAD -> master)
-| Author: FRANCK <boukalafranck0@gmail.com>
-| Date:   Wed Sep 16 23:16:54 2026 +0200
-| 
-|     Ajout du troisième fichier
-| 
-* commit 75e6d6c0b48bd872751954f2789b6167915e9584
-| Author: FRANCK <boukalafranck0@gmail.com>
-| Date:   Wed Sep 16 23:15:55 2026 +0200
-| 
-|     Ajout du deuxième fichier
-| 
-* commit 2d98c557c31b9e6f7e3a8743567d25ef1697f0d4
-  Author: FRANCK <boukalafranck0@gmail.com>
-  Date:   Wed Sep 16 23:13:49 2026 +0200
-  
-      Ajout du premier fichier
-(END)
+  Date:   Thu Sep 17 12:12:49 2026 +0200
+
+      Initial commit
 
 ```
+
+**NB :** Je tiens à préciser que ce sont des fichiers vides !
