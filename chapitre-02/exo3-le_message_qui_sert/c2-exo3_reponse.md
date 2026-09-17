@@ -70,3 +70,4 @@ Date:   Fri Aug 28 22:02:54 2026 +0100
 * L'auteur dudit commit;
 * La date dudit commit;
 * Les détails lié au commit.
+* Ces commit ne porte pas que sur un seul sujet;
