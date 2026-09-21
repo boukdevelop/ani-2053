@@ -6,27 +6,6 @@
 Dessinez, au tableau, le graphe des commits d'un dépôt réel : les branches, un point de divergence, une fusion. Puis montrez le même graphe avec git log -{}-graph et faites correspondre les deux.
 --
 
-### 1. Schéma conceptuel du graphe des commits
-
-Voici la représentation visuelle avec les **branches**, le **point de divergence** et la **fusion (merge)** issus du dépôt :
-
-```txt
-BRANCH MAIN                      BRANCH FEATURE
-         O (Commit initial)
-         |
-         O (Ajout du README)
-         | \
-         |  \ (Point de divergence)
-         |   O (Premièr travail de la branche feature)
-         |   |
-         O   O (Ajout de la fonctionnalité)
-         |  /
-         | / (Point de fusion / Merge)
-         O (Commit de fusion final - HEAD)
-```
-
----
-
 Ce qu'affiche la commande `git log --oneline --graph -n 45` :
 -
 
