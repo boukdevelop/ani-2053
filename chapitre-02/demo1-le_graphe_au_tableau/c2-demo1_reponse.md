@@ -61,7 +61,6 @@ $ git log --oneline --graph -n 45
  ce rectangle de couleur, et le cadre dit deja l appartenance en entourant les noeuds. Plus : gen.rendre() refuse mecaniquement les deux pieges du rendu (URL absolue imposee, poids du PNG veri
 fie) et la REGLE passe en tete du LISEZMOI
 (END)
-
 ```
 Voici le schéma conceptuel du graphe (arbre des commits) suivi de la correspondance détaillée avec la sortie textuelle de `git log --oneline --graph -n 45`.
 

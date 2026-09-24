@@ -1,4 +1,4 @@
-# Le commit partiel
+> # Le commit partiel
 
 ***Énoncé :***
 Modifiez deux choses sans rapport dans le même fichier, puis faites-en deux commits séparés avec git add -p. Vérifiez dans l'historique que chacun ne contient que son sujet.
@@ -8,6 +8,7 @@ Modifiez deux choses sans rapport dans le même fichier, puis faites-en deux com
 Avant de faire quoi que se soit comme ajout ou push, j'ai biensûr fait un `git status`.
 
 ## La première sortie de `git add -p` est :
+
 ```bash
 warning: in the working copy of 'file1.txt', LF will be replaced by CRLF the nex
 t time Git touches it
