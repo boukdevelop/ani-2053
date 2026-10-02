@@ -1,0 +1,5 @@
+Ce que la coquille fait a ma place : Elle crée la fenêtre et sa cible de rendu, exécute la boucle de l’application et gère les événements ainsi que la fermeture.Le programme n’a donc qu’à fournir sa configuration et son comportement.
+
+Ce qui se passe si je configure dans OnInit : OnInit est appelé après la création de la fenêtre et de la cible de rendu.Changer la configuration à ce moment-là ne recrée pas la fenêtre ; le titre, la taille ou le fond configurés trop tard ne sont donc pas appliqués comme prévu.
+
+Ce qui se passe sans NKMain.h : Le code de nkmain peut compiler, mais l’édition de liens échoue car NKMain.h fournit le point d’entrée natif de la plateforme, par exemple WinMain sous Windows.
