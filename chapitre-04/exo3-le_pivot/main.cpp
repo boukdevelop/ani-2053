@@ -13,19 +13,19 @@ bool IsValidAngle(long long angle, int &cos, int &sin)
 
     switch (angle / 90)
     {
-    case 0:    // 0°
+    case 0: // 0°
         cos = 1;
         sin = 0;
         break;
-    case 1:    // 90°
+    case 1: // 90°
         cos = 0;
         sin = 1;
         break;
-    case 2:    // 180°
+    case 2: // 180°
         cos = -1;
         sin = 0;
         break;
-    case 3:    // 270°
+    case 3: // 270°
         cos = 0;
         sin = -1;
         break;
@@ -74,7 +74,7 @@ int main()
             long long ay = (localY[j] - oy) * sy;
 
             long long rx = ax * cos - ay * sin;
-            long long ry = ax * cos + ay * sin;
+            long long ry = ax * sin + ay * cos;
 
             cornerX[j] = px + rx;
             cornerY[j] = py + ry;
