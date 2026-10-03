@@ -1,0 +1,5 @@
+Ce que la coquille me donne : elle prend en charge la création de la fenêtre et de la cible de rendu, la boucle principale, le plafonnement des grands deltaTime et la cadence visée de 60 images par seconde. Je peux me concentrer sur la configuration, la mise à jour et le dessin.
+
+Ce qu'elle me prend : elle décide à ma place de l'ordre et du rythme de la boucle, de la façon de pomper les événements, et de la gestion du cycle de vie de la fenêtre. Par exemple, son deltaTime est ramené à 1/60 s lorsqu'il dépasse 0,1 s.
+
+Quand je choisirais la main : je l'utiliserais si je voulais contrôler explicitement les événements, l'ordre des étapes, le backend graphique ou une boucle adaptée à une autre architecture. Pour ce carré simple, la coquille est plus courte et suffit.
