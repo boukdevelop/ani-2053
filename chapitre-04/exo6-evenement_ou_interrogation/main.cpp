@@ -26,8 +26,8 @@ int main()
     bool left_pressed = false;
 
     // Positions des carrés
-    long long xe = 0; // Par événements
-    long long xi = 0; // Par interrogation
+    long long xe = 0;   // Par événements
+    long long xi = 0;   // Par interrogation
 
     // Compteurs
     long long sauts_events = 0;
