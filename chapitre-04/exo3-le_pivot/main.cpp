@@ -6,7 +6,7 @@ using namespace std;
 
 bool IsValidAngle(long long angle, int &cos, int &sin)
 {
-    angle = ((angle % 360) + 360) % 360;
+    angle = (angle % 360 + 360) % 360;
 
     if (angle % 90 != 0)
         return false;
