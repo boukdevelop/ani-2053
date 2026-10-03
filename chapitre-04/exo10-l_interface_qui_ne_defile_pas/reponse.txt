@@ -1,0 +1,5 @@
+Ce que fait la barre sans ResetView : elle défile avec le monde et finit en partie hors de la fenêtre. Le texte de l'interface se déplace aussi, puisqu'il est dessiné sous la même vue.
+
+Pourquoi : une vue est un état du renderer, pas un objet dessiné. Après SetView, elle transforme toutes les coordonnées des dessins suivants, y compris celles de la barre et du texte.
+
+Ou placer l'appel : juste après le dessin du monde et avant le premier élément d'interface. ResetView restaure la vue par défaut ; la barre et le texte sont alors placés dans les coordonnées de la fenêtre.
