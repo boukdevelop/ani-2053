@@ -117,7 +117,7 @@ int main()
     for (const string &name : order)
     {
         const ObjectWorld &obj = world_objects[name];
-        cout << name << ' ' << obj.x << ' ' << obj.y << ' ' 
+        cout << name << ' ' << obj.x << ' ' << obj.y << ' '
              << obj.angle << ' ' << obj.echelle << '\n';
     }
 
