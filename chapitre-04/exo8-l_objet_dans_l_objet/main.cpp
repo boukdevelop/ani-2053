@@ -19,25 +19,25 @@ struct ObjectWorld {
 void getCosSin(long long angle, long long &c, long long &s) {
     long long norm = (angle % 360 + 360) % 360;
     switch (norm) {
-        case 0:   
+        case 0:
             c = 1;
-            s = 0;  
+            s = 0;
             break;
-        case 90:  
-            c = 0;  
-            s = 1;  
+        case 90:
+            c = 0;
+            s = 1;
             break;
-        case 180: 
-            c = -1; 
-            s = 0;  
+        case 180:
+            c = -1;
+            s = 0;
             break;
-        case 270: 
-            c = 0;  
-            s = -1; 
+        case 270:
+            c = 0;
+            s = -1;
             break;
-        default:  
-            c = 1;  
-            s = 0;  
+        default:
+            c = 1;
+            s = 0;
             break;
     }
 }
