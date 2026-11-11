@@ -1,0 +1,5 @@
+file : NkRefView.h, lines : 86, includes : NKMath/NKMath.h
+file : NkRefBoard.h, lines : 371, includes : NKMath/NKMath.h NKContainers/Sequential/NkVector.h NKContainers/String/NkString.h
+file : NkRefFile.h, lines : 224, includes : NKContainers/Sequential/NkVector.h NkRef/NkRefBoard.h NkRef/NkRefView.h
+file : main.cpp, lines : 1977, includes : NKWindow/NKWindow.h NKWindow/NKMain.h NKEvent/NkEvent.h NKEvent/NkWindowEvent.h NKEvent/NkMouseEvent.h NKEvent/NkKeyboardEvent.h NKEvent/NkDropEvent.h NKLogger/NkLog.h NKTime/NkTime.h NKCanvas/Renderer/Targets/NkRenderWindow.h NKCanvas/Core/NkContextDesc.h NKCanvas/Core/NkGraphicsApi.h NKCanvas/Renderer/Resources/NkTexture.h NKCanvas/Renderer/Resources/NkSprite.h NKCanvas/Renderer/Resources/NkFont.h NKFileSystem/NkDirectory.h NKFileSystem/NkFile.h NKImage/NKImage.h NKGui/NKGui.h NKCanvas/UI/NkGuiCanvasBackend.h NKMemory/NkUniquePtr.h NKTime/NkClock.h NKWindow/Core/NkDialogs.h NKCore/NkTraits.h NkRef/NkRefView.h NkRef/NkRefBoard.h NkRef/NkRefFile.h
+commit : 6fb634fc
